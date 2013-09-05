@@ -7,7 +7,7 @@
  * @property AuthAssigner $instance
  * @property mixed $data
  */
-class AuthAssigner extends CComponent{
+class AuthAssigner extends CApplicationComponent{
 	/**
 	 * @var string item type used to grant or revoke
 	 */
@@ -17,10 +17,6 @@ class AuthAssigner extends CComponent{
 	const ITEM_PERMISSION='permission';
 	const ITEM_OPERATION= 'operation';
 	const ITEM_RESOURCE = 'resource';
-	/**
-	 * @var AuthAssigner
-	 */
-	private static $_instance = null;
 	/**
 	 * @var string a grant or revoke command's subject
 	 */
@@ -67,19 +63,6 @@ class AuthAssigner extends CComponent{
 			)
 			
 	);
-	
-	private function __construct(){
-	}
-	
-	/**
-	 * @return AuthAssigner
-	 */
-	public static function getInstance(){
-		if ( self::$_instance === null ){
-			self::$_instance = new AuthAssigner();
-		}
-		return self::$_instance;
-	}
 	
 	/**
 	 * @param string $itemType

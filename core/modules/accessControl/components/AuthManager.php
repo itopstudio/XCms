@@ -29,7 +29,17 @@ class AuthManager extends CApplicationComponent{
 		Yii::import('cms.modules.accessControl.components.*');
 		Yii::import('cms.modules.accessControl.components.calculators.*');
 		Yii::import('cms.modules.accessControl.models.*');
-		Yii::app()->setComponent('rightCalculator',array('class'=>'accessControl.components.calculators.RightCalculatorAR'));
+		Yii::app()->setComponents(array(
+				'rightCalculator' => array(
+						'class'=>'accessControl.components.calculators.RightCalculatorAR'
+				),
+				'assigner' => array(
+						'class'=>'accessControl.components.AuthAssigner'
+				),
+				'menu' => array(
+						'class'=>'accessControl.components.AuthMenu'
+				),
+		));
 	}
 	
 	/**
@@ -43,7 +53,7 @@ class AuthManager extends CApplicationComponent{
 	 * @return AuthAssigner
 	 */
 	public function getAssigner(){
-		return AuthAssigner::getInstance();
+		return Yii::app()->getComponent('assigner');
 	}
 	
 	/**

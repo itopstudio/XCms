@@ -22,10 +22,14 @@ class RightCalculatorAR extends RightCalculatorBase{
 		))->findByPk($this->getUid());
 		if ( $user !== null ){
 			$separator = 'u'.$this->getUid();
-			$userRoles = $this->initRoleWithChildren($user->AuthRoles);
+			$roles = $user->AuthRoles;
+			$groups = $user->AuthGroups;
+			$permissions = $user->AuthPermissions;
+			$userRoles = $this->initRoleWithChildren($roles);
+			
 			$this->storeData('userRoles',$separator,$userRoles);
-			$this->storeData('userGroups',$separator,$user->AuthGroups);
-			$this->storeData('userPermissions',$separator,$user->AuthPermissions);
+			$this->storeData('userGroups',$separator,$groups);
+			$this->storeData('userPermissions',$separator,$permissions);
 		}
 	}
 	
