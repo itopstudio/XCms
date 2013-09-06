@@ -42,4 +42,32 @@ class CmsActiveRecord extends CActiveRecord{
 			return $this->getMetaData()->tableSchema->rawName;
 		}
 	}
+	
+	/**
+	 * apply unique constraint wehn a index is a union index
+	 * @param string $attribute
+	 * @param array $params
+	 */
+	public function unionUnique($attributes,$params=array()){
+		$unionAttributes = array();
+		$criteria = new CDbCriteria();
+		if ( isset($params['unionAttributes']) ){
+			$unionAttributes = $params['unionAttributes'];
+			unset($params['unionAttributes']);
+			
+			foreach ( $unionAttributes as $unionAttribute ){
+				$valueParamName = ':'.$unionAttribute;
+				$criteria->addCondition("{$unionAttribute}={$valueParamName}");
+				$criteria->params[$valueParamName] = $this->$unionAttribute;
+			}
+			if ( isset($params['criteria']) ){
+				$params['criteria'] = $criteria->mergeWith($params['criteria']);
+			}else {
+				$params['criteria'] = $criteria;
+			}
+		}
+		
+		$uniqueValidator = CValidator::createValidator('unique',$this, $attributes,$params);
+		$uniqueValidator->validate($this);
+	}
 }
