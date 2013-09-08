@@ -22,7 +22,7 @@
  * The followings are the available model relations:
  * @property AuthPermission[] $authPermissions
  */
-class AuthOperation extends CmsActiveRecord
+class AuthOperation extends LevelModel
 {
 	/**
 	 * @return string the associated database table name

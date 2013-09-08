@@ -6,6 +6,13 @@
  */
 abstract class RightCalculatorBase extends CComponent{
 	/**
+	 * use to generate a unique separator for a user
+	 * @var string
+	 */
+	const SEPARATOR_PREFIX_USER = 'u';
+	const SEPARATOR_PREFIX_GROUP = 'g';
+	const SEPARATOR_PREFIX_ROLE = 'r';
+	/**
 	 * stores calculated data
 	 * 'userGroups'.Data of users' groups.Separated by user id.
 	 * 'userRoles'.Data of user roles.Separated by user id.
@@ -36,6 +43,21 @@ abstract class RightCalculatorBase extends CComponent{
 	
 	public function init(){
 		
+	}
+	
+	/**
+	 * generate a unique separator.usally use pk
+	 * @param string $prefix
+	 * @param mixed $data
+	 * @return string
+	 */
+	public function generateSeparator($prefix,&$data){
+		if ( is_string($data) ){
+			$separator = $prefix.$data;
+		}else {
+			$separator = $prefix.serialize($data);
+		}
+		return $separator;
 	}
 	
 	/**
@@ -148,7 +170,7 @@ abstract class RightCalculatorBase extends CComponent{
 		if ( $this->_data['userRoles'] === null ){
 			$this->initUserData();
 		}
-		return $this->getStoredData('userRoles','u'.$this->getUid());
+		return $this->getStoredData('userRoles',self::SEPARATOR_PREFIX_USER.$this->getUid());
 	}
 	
 	/**
@@ -158,7 +180,7 @@ abstract class RightCalculatorBase extends CComponent{
 		if ( $this->_data['userGroups'] === null ){
 			$this->initUserData();
 		}
-		return $this->getStoredData('userGroups','u'.$this->getUid());
+		return $this->getStoredData('userGroups',self::SEPARATOR_PREFIX_USER.$this->getUid());
 	}
 	
 	/**
@@ -168,7 +190,7 @@ abstract class RightCalculatorBase extends CComponent{
 		if ( $this->_data['userPermissions'] === null ){
 			$this->initUserData();
 		}
-		return $this->getStoredData('userPermissions','u'.$this->getUid());
+		return $this->getStoredData('userPermissions',self::SEPARATOR_PREFIX_USER.$this->getUid());
 	}
 	
 	/**

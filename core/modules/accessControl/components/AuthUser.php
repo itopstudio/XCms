@@ -7,18 +7,16 @@
 class AuthUser extends CWebUser{
 	private $_access = array();
 	
-	public $accessCacherId = 'SessionCache';
-	
 	/**
 	 * check operation access
 	 * @param array $operation. contains 'module','controller','action'
 	 * @param array $params use to absorb params delivered in {@link CAccessControlFilter}
 	 * @param boolean $allowCaching
-	 * 
+	 * @return boolean
 	 */
 	public function checkAccess($operation,$params=array(),$allowCaching=true){
 		if ( $allowCaching === true ){
-			$operationKey = md5(json_encode($operation));
+			$operationKey = $this->generateOperationKey($operation);
 			$cachedAccess = $this->getCachedAccess($operationKey);
 			if ( $cachedAccess !== null ){
 				return $cachedAccess;
@@ -30,6 +28,14 @@ class AuthUser extends CWebUser{
 			$this->cacheAccess($operationKey,$access);
 		}
 		return $access;
+	}
+	
+	/**
+	 * @param array $operation
+	 * @return string
+	 */
+	public function generateOperationKey(&$operation){
+		return md5(json_encode($operation));
 	}
 	
 	/**

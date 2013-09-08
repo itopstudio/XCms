@@ -15,13 +15,14 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 * init user's roles,groups,temporary permissions via $this->getUid().
 	 */
 	public function initUserData(){
+		$uid = $this->getUid();
 		$user = UserModel::model()->with(array(
 				'AuthPermissions',
 				'AuthGroups' => array('with'=>'AuthRole'),
 				'AuthRoles' => array('with'=>'AuthPermission')
-		))->findByPk($this->getUid());
+		))->findByPk($uid);
 		if ( $user !== null ){
-			$separator = 'u'.$this->getUid();
+			$separator = self::SEPARATOR_PREFIX_USER.$uid;
 			$roles = $user->AuthRoles;
 			$groups = $user->AuthGroups;
 			$permissions = $user->AuthPermissions;
@@ -40,7 +41,7 @@ class RightCalculatorAR extends RightCalculatorBase{
 	private function initRoleWithChildren(&$roles){
 		static $returnRole = array();
 		foreach ( $roles as $role ){
-			$rolePk = 'r'.$role->getPrimaryKey();
+			$rolePk = self::SEPARATOR_PREFIX_ROLE.$role->getPrimaryKey();
 			if ( !isset($returnRole[$rolePk])){
 				$returnRole[$rolePk] = $role;
 			}
@@ -49,7 +50,7 @@ class RightCalculatorAR extends RightCalculatorBase{
 			
 			$children = $role->findChildren($findCondition);
 			foreach ( $children as $child ){
-				$childPk = 'r'.$child->getPrimaryKey();
+				$childPk = self::SEPARATOR_PREFIX_ROLE.$child->getPrimaryKey();
 				if ( !isset($returnRole[$childPk])){
 					$returnRole[$childPk] = $child;
 				}
@@ -64,11 +65,11 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 */
 	public function getGroupRoles($groupId=null){
 		if ( $groupId !== null ){
-			return $this->getStoredData('groupRoles','g'.$groupId);
+			return $this->getStoredData('groupRoles',self::SEPARATOR_PREFIX_GROUP.$groupId);
 		}
 		$groupRoles = array();
 		foreach ( $this->getUserGroups() as $userGroup ){
-			$separator = 'g'.$userGroup->getPrimaryKey();
+			$separator = self::SEPARATOR_PREFIX_GROUP.$userGroup->getPrimaryKey();
 			if ( isset($this->_data['groupRoles'][$separator]) ){
 				$groupRoles[$separator] = $this->_data['groupRoles'][$separator];
 			}else {
@@ -87,10 +88,10 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 */
 	public function getFinalRoles($uid=null,$refresh=false){
 		if ( $uid !== null ){
-			return $this->getStoredData('finalRoles','u'.$uid);
+			return $this->getStoredData('finalRoles',self::SEPARATOR_PREFIX_USER.$uid);
 		}
-		if ( !$refresh && isset($this->_data['finalRoles']['u'.$this->getUid()]) ){
-			return $this->_data['finalRoles']['u'.$this->getUid()];
+		if ( !$refresh && isset($this->_data['finalRoles'][self::SEPARATOR_PREFIX_USER.$this->getUid()]) ){
+			return $this->_data['finalRoles'][self::SEPARATOR_PREFIX_USER.$this->getUid()];
 		}
 		
 		$userRoles = $this->getUserRoles();
@@ -112,7 +113,7 @@ class RightCalculatorAR extends RightCalculatorBase{
 				}
 			}
 		}
-		$this->storeData('finalRoles','u'.$this->getUid(),$userRoles);
+		$this->storeData('finalRoles',self::SEPARATOR_PREFIX_USER.$this->getUid(),$userRoles);
 		return $userRoles;
 	}
 	
@@ -122,11 +123,11 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 */
 	public function getRolePermissions($roleId=null){
 		if ( $roleId !== null ){
-			return $this->getStoredData('rolePermissions','r'.$roleId);
+			return $this->getStoredData('rolePermissions',self::SEPARATOR_PREFIX_ROLE.$roleId);
 		}
 		$rolePermissions = array();
 		foreach ( $this->getFinalRoles() as $userRole ){
-			$separator = 'r'.$userRole->getPrimaryKey();
+			$separator = self::SEPARATOR_PREFIX_ROLE.$userRole->getPrimaryKey();
 			if ( isset($this->_data['rolePermissions'][$separator]) ){
 				$rolePermissions[$separator] = $this->_data['rolePermissions'][$separator];
 			}else {
@@ -144,9 +145,9 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 */
 	public function getFinalPermissions($uid=null,$refresh=false){
 		if ( $uid !== null ){
-			return $this->getStoredData('finalPermissions','u'.$uid);
+			return $this->getStoredData('finalPermissions',self::SEPARATOR_PREFIX_USER.$uid);
 		}
-		$separator = 'u'.$this->getUid();
+		$separator = self::SEPARATOR_PREFIX_USER.$this->getUid();
 		if ( !$refresh && isset($this->_data['finalPermissions'][$separator]) ){
 			return $this->_data['finalPermissions'][$separator];
 		}

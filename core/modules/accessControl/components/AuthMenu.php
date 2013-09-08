@@ -7,5 +7,17 @@
  * Encoding UTF-8
  */
 class AuthMenu extends CApplicationComponent{
-	
+	/**
+	 * generate a menu to a user
+	 * @param int $uid
+	 * @param int $deepth
+	 */
+	public function generateUserMenu($uid,$deepth=2){
+		$calculator = Yii::app()->getAuthManager()->getCalculator();
+		$userPermissions = $calculator->getFinalPermissions($uid);
+		if ( empty($userPermissions) ){
+			return array();
+		}
+		
+	}
 }
