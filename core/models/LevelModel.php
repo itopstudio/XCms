@@ -426,6 +426,18 @@ abstract class LevelModel extends CmsActiveRecord{
 	}
 	
 	/**
+	 * 
+	 * @param int $level
+	 * @param mixed $condition string or CDbCeriteria
+	 * @param array $params
+	 * @return CActiveRecord[]
+	 */
+	public function findChildrenByLevel($level,$condition='',$params=array()){
+		$level = intval($level);
+		return $this->findChildren("`level`={$level}",$condition,$params);
+	}
+	
+	/**
 	 * find children whose boundary is between $node->lft and $node->rgt.And returns a preorder tree.
 	 * @param mixed $node CActiveRecord or int
 	 * @return array[string,CActiveRecord] those record are orderd in lft ASC.
@@ -435,8 +447,7 @@ abstract class LevelModel extends CmsActiveRecord{
 		if ( $node === null ){
 			return null;
 		}
-		$findCondition = "`lft`>{$node->getAttribute('lft')} AND `rgt`<{$node->getAttribute('rgt')}";
-		$children = $this->findChildren($findCondition,array('order'=>'`lft` ASC'));
+		$children = $this->findChildrenByBoundary($node,array('order'=>'`lft` ASC'));
 		
 		$preorderTree = array();
 		$parentsMap = array();

@@ -14,9 +14,28 @@ class AuthMenu extends CApplicationComponent{
 	 */
 	public function generateUserMenu($uid,$deepth=2){
 		$calculator = Yii::app()->getAuthManager()->getCalculator();
-		$userPermissions = $calculator->getFinalPermissions($uid);
+		$userPermissions = $calculator->run($uid);
 		if ( empty($userPermissions) ){
 			return array();
+		}
+		foreach ( $userPermissions as $permission ){
+			$opKey = 'op'.$permission->getAttribute('operation_id');
+			$opIds[$opKey] = true;
+		}
+		
+		$model = AuthOperation::model();
+		$topMenus = $model->findChildrenByLevel(1);
+		if ( $topMenus === null ){
+			return array();
+		}
+		$menu = array();
+		foreach ( $topMenus as $topMenu ){
+			$childrenTree = $model->findChildrenInPreorder($topMenu);
+			foreach ( $childrenTree as $key => $node ){
+				if ( $node['parent'] === null ){
+					continue;
+				}
+			}
 		}
 		
 	}
