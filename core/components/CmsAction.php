@@ -7,5 +7,83 @@
  * Encoding UTF-8
  */
 class CmsAction extends CAction{
+	/**
+	 * @var CmsApplication
+	 */
+	public $app;
+	/**
+	 * @var CHttpRequest
+	 */
+	public $request;
 	
+	public function __construct($controller, $id){
+		parent::__construct($controller, $id);
+		$this->app = Yii::app();
+		$this->request = Yii::app()->getRequest();
+	}
+	/**
+	 * 
+	 * @param number $code
+	 * @param string $message
+	 * @param string $data
+	 * @param string $format
+	 * @param string $contentType
+	 */
+	public function response($code=200,$message='',$data=null,$format='json',$contentType='text/html'){
+		$this->getController()->response($code,$message,$data,$format,$contentType);
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getPost($name=null,$defaultValue=null){
+		return $this->getController()->getPost($name,$defaultValue);
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getQuery($name=null,$defaultValue=null){
+		return $this->getController()->getQuery($name,$defaultValue);
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getPut($name,$defaultValue=null){
+		return $this->getController()->getPut($name,$defaultValue);
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getDelete($name,$defaultValue=null){
+		return $this->getController()->getDelete($name,$defaultValue);
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getRestParam($name=null,$defaultValue=null){
+		return $this->getController()->getRestParam($name,$defaultValue);
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getRequestParam($name,$defaultValue=null){
+		return $this->getController()->getRequestParam($name,$defaultValue);
+	}
 }

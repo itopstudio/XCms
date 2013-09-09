@@ -41,11 +41,18 @@ class CmsController extends CController{
 	 */
 	public $actionClassPathAlias = 'application.controllers';
 	
+	/**
+	 * @see CController::init()
+	 */
 	public function init(){
 		$this->app = Yii::app();
-		$this->request = Yii::app()->getRequest();
+		$this->request = $this->app->getRequest();
 	}
 	
+	/**
+	 * default to use hasLogined filter
+	 * @see CController::filters()
+	 */
 	public function filters(){
 		return array(
 				'hasLogined' => array('cms.components.filters.HasLogined')
@@ -118,7 +125,7 @@ class CmsController extends CController{
 		return $this->request->getParam($name,$defaultValue);
 	}
 	
-	protected function response($code=200,$message='',$data=null,$format='json',$contentType='text/html'){
+	public function response($code=200,$message='',$data=null,$format='json',$contentType='text/html'){
 		$status_header = 'HTTP/1.1 '.$code.' '.$this->getStatusCodeMsg($code);
 		header($status_header);
 		header('Content-type: '.$contentType);
@@ -130,10 +137,10 @@ class CmsController extends CController{
 		if ( $format === 'json' ){
 			echo json_encode($response);
 		}
-		Yii::app()->end();
+		$this->app->end();
 	}
 	
-	protected function getStatusCodeMsg($code){
+	public function getStatusCodeMsg($code){
 		static $codes = Array(
 				200 => 'OK',
 				400 => 'Bad Request',
