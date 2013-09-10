@@ -31,21 +31,17 @@ class AuthMenu extends CApplicationComponent{
 		$menu = array();
 		foreach ( $topMenus as $topMenu ){
 			$childrenTree = $model->findChildrenInPreorder($topMenu);
-			$willBeUnset = array();
-			foreach ( $childrenTree as $key => $node ){
-				$level = $node->getAttribute('level');
-				if ( $level > $deepth ){
-					unset($childrenTree[$key]);
-					continue;
+			$count = count($childrenTree)-1;
+			while ( $count >= 0 ){
+				$opKey = 'op'.$childrenTree[$count]->getPrimaryKey();
+				$level = $childrenTree[$count]->getAttribute('level');
+				if ( $level > $deepth || !isset($opIds[$opKey]) ){
+					unset($childrenTree[$count]);
 				}
-				$opKey = 'op'.$node->getPrimaryKey();
-				if ( !isset($opIds[$opKey]) ){
-					$willBeUnset[$key] = true;
-				}else {
-					
-				}
+				++$count;
 			}
+			$menu = array_merge($menu,$childrenTree);
 		}
-		
+		return $menu;
 	}
 }
