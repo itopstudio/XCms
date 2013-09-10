@@ -31,9 +31,18 @@ class AuthMenu extends CApplicationComponent{
 		$menu = array();
 		foreach ( $topMenus as $topMenu ){
 			$childrenTree = $model->findChildrenInPreorder($topMenu);
+			$willBeUnset = array();
 			foreach ( $childrenTree as $key => $node ){
-				if ( $node['parent'] === null ){
+				$level = $node->getAttribute('level');
+				if ( $level > $deepth ){
+					unset($childrenTree[$key]);
 					continue;
+				}
+				$opKey = 'op'.$node->getPrimaryKey();
+				if ( !isset($opIds[$opKey]) ){
+					$willBeUnset[$key] = true;
+				}else {
+					
 				}
 			}
 		}
