@@ -7,5 +7,7 @@
  * Encoding UTF-8
  */
 class CmsModule extends CWebModule{
-	
+	protected function init(){
+		Yii::app()->setComponent('messages', array('basePath'=>Yii::getPathOfAlias('cms.messages')));
+	}
 }

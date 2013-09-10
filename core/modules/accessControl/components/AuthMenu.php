@@ -31,12 +31,17 @@ class AuthMenu extends CApplicationComponent{
 		$menu = array();
 		foreach ( $topMenus as $topMenu ){
 			$childrenTree = $model->findChildrenInPreorder($topMenu);
-			foreach ( $childrenTree as $key => $node ){
-				if ( $node['parent'] === null ){
-					continue;
+			$count = count($childrenTree)-1;
+			while ( $count >= 0 ){
+				$opKey = 'op'.$childrenTree[$count]->getPrimaryKey();
+				$level = $childrenTree[$count]->getAttribute('level');
+				if ( $level > $deepth || !isset($opIds[$opKey]) ){
+					unset($childrenTree[$count]);
 				}
+				++$count;
 			}
+			$menu = array_merge($menu,$childrenTree);
 		}
-		
+		return $menu;
 	}
 }

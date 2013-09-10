@@ -8,8 +8,7 @@
  */
 class AccessControlModule extends CmsModule{
 	protected function init(){
+		parent::init();
 		Yii::import('accessControl.controllers.*');
-		
-		Yii::app()->setComponent('messages', array('basePath'=>Yii::getPathOfAlias('cms.messages')));
 	}
 }
