@@ -90,31 +90,12 @@ class UserModel extends SingleInheritanceModel
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'adViewClicks' => array(self::HAS_MANY, 'AdViewClick', 'user_id'),
-			'administrators' => array(self::HAS_ONE, 'Administrators', 'id'),
 			'AuthPermissions' => array(self::MANY_MANY, 'AuthPermission', '{{auth_user_permission}}(user_id, permission_id)'),
-			'ChatRooms' => array(self::MANY_MANY, 'ChatRoom', '{{chat_admin}}(user_id, room_id)'),
-			'chatMessages' => array(self::HAS_MANY, 'ChatMessage', 'sender'),
-			'ChatRooms1' => array(self::MANY_MANY, 'ChatRoom', '{{chat_shielded}}(user_id, room_id)'),
-			'Groups' => array(self::MANY_MANY, 'Groups', '{{group_admin}}(user_id, group_id)'),
-			'groupMessages' => array(self::HAS_MANY, 'GroupMessage', 'sender'),
-			'Groups1' => array(self::MANY_MANY, 'Groups', '{{group_shielded}}(user_id, group_id)'),
-			'groups' => array(self::HAS_MANY, 'Groups', 'master_id'),
-			'ChatMessages' => array(self::MANY_MANY, 'ChatMessage', '{{offline_chat_message}}(user_id, msg_id)'),
-			'GroupMessages' => array(self::MANY_MANY, 'GroupMessage', '{{offline_group_message}}(user_id, msg_id)'),
-			'sqbUser' => array(self::HAS_ONE, 'SqbUser', 'id'),
-			'userBlacklists' => array(self::HAS_MANY, 'UserBlacklist', 'user_id'),
-			'userBlacklists1' => array(self::HAS_MANY, 'UserBlacklist', 'black_user_id'),
 			'AuthGroups' => array(self::MANY_MANY, 'AuthGroups', '{{user_group}}(user_id, group_id)'),
-			'userInterests' => array(self::HAS_MANY, 'UserInterest', 'follower'),
-			'userInterests1' => array(self::HAS_MANY, 'UserInterest', 'followed'),
-			'ChatRooms2' => array(self::MANY_MANY, 'ChatRoom', '{{user_own_chat}}(user_id, room_id)'),
-			'Groups2' => array(self::MANY_MANY, 'Groups', '{{user_own_group}}(user_id, group_id)'),
-			'userReports' => array(self::HAS_MANY, 'UserReport', 'user_id'),
 			'AuthRoles' => array(self::MANY_MANY, 'AuthRoles', '{{user_role}}(user_id, role_id)'),
-			'userTrends' => array(self::HAS_MANY, 'UserTrends', 'user_id'),
-			'userTrendsReplies' => array(self::HAS_MANY, 'UserTrendsReply', 'user_id'),
-			'UserTrends' => array(self::MANY_MANY, 'UserTrends', '{{user_trends_support}}(user_id, trends_id)'),
+			'firends' => array(self::HAS_MANY,'UserInterest','follower','condition'=>'status=1'),
+			'chatGroups' => array(self::MANY_MANY,'Groups','{{user_own_group}}(group_id,user_id)'),
+			'chatRooms' => array(self::MANY_MANY,'ChatRoom','{{user_own_chat}}(room_id,user_id)')
 		);
 	}
 
@@ -222,5 +203,38 @@ class UserModel extends SingleInheritanceModel
 		$security = Yii::app()->getSecurityManager();
 		$this->_changeUUID = true;
 		$this->setAttribute('password',$security->generate($newPassword));
+	}
+	
+	public static function getUserRelationInfo($uid){
+		$raw = $this->with(array(
+				'friends' => array('with'=>'follwed','select'=>'id,nickname'),
+				'chatRooms',
+				'chatGroups'
+		))->findByPk($uid,array('select'=>'id'));
+		if ( empty($raw) ){
+			return array();
+		}
+		$return = array(
+				'alias' => 'user'.$uid,
+				'friends' => array(),
+				'chatRooms' => array(),
+				'tags' => array()
+		);
+		foreach ( $raw->getRelated('friends') as $friend ){
+			$follwed = $friend->getRelated('follwed');
+			$return['friends'][] = array(
+					'id' => $follwed->getAttribute('id'),
+					'nickname' => $follwed->getAttribute('nickname')
+			);
+		}
+		foreach ( $raw->getRelated('chatRooms') as $chatRoom ){
+			$return['chatRooms'][] = $chatRoom->getAttributes();
+			$return['tags'][] = 'room'.$chatRoom->getAttribute('id');
+		}
+		foreach ( $raw->getRelated('chatGroups') as $chatGroup ){
+			$return['chatGroups'][] = $chatGroup->getAttributes();
+			$return['tags'][] = 'group'.$chatGroup->getAttribute('id');
+		}
+		return $return;
 	}
 }

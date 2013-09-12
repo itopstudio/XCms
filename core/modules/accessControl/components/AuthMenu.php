@@ -28,7 +28,9 @@ class AuthMenu extends CApplicationComponent{
 		if ( $topMenus === null ){
 			return array();
 		}
+		
 		$menu = array();
+		$user = Yii::app()->getUser();
 		foreach ( $topMenus as $topMenu ){
 			$childrenTree = $model->findChildrenInPreorder($topMenu);
 			$count = count($childrenTree)-1;
@@ -37,6 +39,14 @@ class AuthMenu extends CApplicationComponent{
 				$level = $childrenTree[$count]->getAttribute('level');
 				if ( $level > $deepth || !isset($opIds[$opKey]) ){
 					unset($childrenTree[$count]);
+				}else {
+					$operation = array(
+							'module' => $childrenTree[$count]->getAttribute('module'),
+							'controller' => $childrenTree[$count]->getAttribute('controller'),
+							'action' => $childrenTree[$count]->getAttribute('action')
+					);
+					$operationKey = $user->generateOperationKey($operation);
+					$user->cacheAccess($operationKey,true);
 				}
 				++$count;
 			}

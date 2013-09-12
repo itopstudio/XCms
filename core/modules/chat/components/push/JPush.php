@@ -45,7 +45,7 @@ class JPush extends PushBase{
 	 * 是否使用ssl连接
 	 * @var boolean
 	 */
-	public $ssl = false;
+	public $enableSsl = false;
 	/**
 	 * Protal上生成的app key
 	 * @var string
