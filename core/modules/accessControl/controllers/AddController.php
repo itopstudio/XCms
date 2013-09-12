@@ -27,6 +27,8 @@ class AddController extends CmsController{
 				'controller' => 'access3',
 				'action' => 'access3'
 		);
+		$t1 = microtime(true);
 		$r = $auth->checkAccess($operation,35);
+		echo microtime(true) - $t1;
 	}
 }

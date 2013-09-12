@@ -18,7 +18,18 @@ class RightCalculatorAR extends RightCalculatorBase{
 		$uid = $this->getUid();
 		$user = UserModel::model()->with(array(
 				'AuthPermissions',
-				'AuthGroups' => array('with'=>'AuthRole'),
+				'AuthGroups' => array(
+						'with' => array(
+								'AuthRole'=>array(
+										'alias' => 'role',
+										'with'=>array(
+												'AuthPermission' => array(
+														'alias' => 'permission'
+												)
+										)
+								),
+						)
+				),
 				'AuthRoles' => array('with'=>'AuthPermission')
 		))->findByPk($uid);
 		if ( $user !== null ){

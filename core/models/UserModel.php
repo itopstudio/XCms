@@ -93,7 +93,7 @@ class UserModel extends SingleInheritanceModel
 			'AuthPermissions' => array(self::MANY_MANY, 'AuthPermission', '{{auth_user_permission}}(user_id, permission_id)'),
 			'AuthGroups' => array(self::MANY_MANY, 'AuthGroups', '{{user_group}}(user_id, group_id)'),
 			'AuthRoles' => array(self::MANY_MANY, 'AuthRoles', '{{user_role}}(user_id, role_id)'),
-			'firends' => array(self::HAS_MANY,'UserInterest','follower','condition'=>'status=1'),
+			'friends' => array(self::HAS_MANY,'UserInterest','follower','condition'=>'status=1'),
 			'chatGroups' => array(self::MANY_MANY,'Groups','{{user_own_group}}(group_id,user_id)'),
 			'chatRooms' => array(self::MANY_MANY,'ChatRoom','{{user_own_chat}}(room_id,user_id)')
 		);
@@ -205,9 +205,17 @@ class UserModel extends SingleInheritanceModel
 		$this->setAttribute('password',$security->generate($newPassword));
 	}
 	
-	public static function getUserRelationInfo($uid){
+	public function getUserRelationInfo($uid){
+		Yii::import('cms.modules.chat.models.*');
 		$raw = $this->with(array(
-				'friends' => array('with'=>'follwed','select'=>'id,nickname'),
+				'friends' => array(
+						'with'=>array(
+								'followed'=>array(
+										'select'=>'id,nickname'
+								),
+						),
+						'select'=>'remark'
+				),
 				'chatRooms',
 				'chatGroups'
 		))->findByPk($uid,array('select'=>'id'));
@@ -218,13 +226,15 @@ class UserModel extends SingleInheritanceModel
 				'alias' => 'user'.$uid,
 				'friends' => array(),
 				'chatRooms' => array(),
+				'chatGroups' => array(),
 				'tags' => array()
 		);
 		foreach ( $raw->getRelated('friends') as $friend ){
-			$follwed = $friend->getRelated('follwed');
+			$follwed = $friend->getRelated('followed');
 			$return['friends'][] = array(
 					'id' => $follwed->getAttribute('id'),
-					'nickname' => $follwed->getAttribute('nickname')
+					'nickname' => $follwed->getAttribute('nickname'),
+					'remark' => $friend->getAttribute('remark'),
 			);
 		}
 		foreach ( $raw->getRelated('chatRooms') as $chatRoom ){
