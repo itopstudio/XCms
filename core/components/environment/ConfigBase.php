@@ -81,9 +81,6 @@ class ConfigBase{
 				'accessControl' => array(
 					'class' => 'cms.modules.accessControl.AccessControlModule'
 				),
-				'ad' => array(
-					'class' => 'cms.modules.ad.AdModule'
-				),
 			),
 				
 			'components'=>array(
