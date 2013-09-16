@@ -43,7 +43,7 @@ class AuthOperation extends LevelModel
 			array('operation_name, controller, action', 'required'),
 			array('operation_name', 'length', 'max'=>20),
 			array('module, controller, action', 'length', 'max'=>30),
-			array('description,menu_level', 'safe'),
+			array('description,fid, level, lft, rgt,', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, operation_name, description, module, controller, action', 'safe', 'on'=>'search'),

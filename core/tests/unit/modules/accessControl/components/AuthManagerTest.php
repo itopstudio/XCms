@@ -101,8 +101,6 @@ class AuthManagerTest extends CDbTestCase{
 	
 	public function testGetCalculator(){
 		$calculator = $this->auth->getCalculator();
-		$this->assertInstanceOf('RightCalculator',$calculator);
+		$this->assertInstanceOf('RightCalculatorBase',$calculator);
 	}
-	
-	
 }

@@ -57,6 +57,13 @@ class AuthManager extends CApplicationComponent{
 	}
 	
 	/**
+	 * @return AuthMenu
+	 */
+	public function getMenu(){
+		return Yii::app()->getComponent('menu');
+	}
+	
+	/**
 	 * generate a series of record.
 	 * @param array $allData
 	 * @param string $type

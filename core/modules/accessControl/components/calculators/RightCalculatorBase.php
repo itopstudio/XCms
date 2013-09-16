@@ -118,9 +118,10 @@ abstract class RightCalculatorBase extends CComponent{
 	 * @throws CException
 	 */
 	public function setUid($uid){
-		if ( empty($uid) || !is_int($uid) ){
+		if ( empty($uid) ){
 			throw new CException(Yii::t('auth','calculator_uid_set_wrong'));
 		}
+		$uid = intval($uid);
 		$this->_uid = $uid;
 	}
 	

@@ -55,7 +55,8 @@ class CmsController extends CController{
 	 */
 	public function filters(){
 		return array(
-				'hasLogined' => array('cms.components.filters.HasLogined')
+				'hasLogined' => array('cms.components.filters.HasLogined'),
+				'accessControl' => 'accessControl'
 		);
 	}
 	
@@ -187,5 +188,19 @@ class CmsController extends CController{
 	
 	public function accessDenied(){
 		
+	}
+	
+	public function accessRules(){
+		return array(
+				array('allow',
+					'roles' => array(
+							array(
+								'module' => $this->getModule()->getId(),
+								'controller' => $this->getId(),
+								'action' => $this->getAction()->getId()),
+					),
+					'deniedCallback' => array($this,'accessDenied')
+				),
+		);
 	}
 }
