@@ -12,12 +12,17 @@ class getRandomListAction extends CmsAction{
 		if ( $loginedId !== $resourceId ){
 			$this->response(400,Yii::t('friends','can not get random list'));
 		}
-		$className = $this->getController()->getModule()->frontUserModelClass;
-		if ( $className === null ){
-			$this->response(501);
+		$module = $this->getController()->getModule();
+		$listSize = $this->getQuery('size',10);
+		$userManager = $this->app->getComponent($module->userManagerId);
+		$users = $userManager->getUserRandom($listSize);
+		
+		$data = array();
+		$attributeNames = array('id','nickname');
+		foreach ( $users as $user ){
+			$data[] = $user->getAttributes($attributeNames);
 		}
-		$model = $className::model();
-		$criteria = new CDbCriteria();
-		$count = $model->count();
+		
+		$this->response(200,'',$data);
 	}
 }

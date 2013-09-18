@@ -11,7 +11,7 @@ class FriendsModule extends CmsModule{
 	 * 
 	 * @var string
 	 */
-	public $frontUserModelClass = null;
+	public $userManagerId = null;
 	
 	protected function init(){
 		parent::init();
