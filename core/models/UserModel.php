@@ -206,7 +206,7 @@ class UserModel extends SingleInheritanceModel
 	}
 	
 	public function getUserRelationInfo($uid){
-		Yii::import('cms.modules.chat.models.*');
+		CmsModule::loadModels('friends');
 		$raw = $this->with(array(
 				'friends' => array(
 						'with'=>array(

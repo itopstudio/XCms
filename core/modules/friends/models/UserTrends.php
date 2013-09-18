@@ -1,31 +1,30 @@
 <?php
 
 /**
- * This is the model class for table "{{groups}}".
+ * This is the model class for table "{{user_trends}}".
  *
- * The followings are the available columns in table '{{groups}}':
+ * The followings are the available columns in table '{{user_trends}}':
  * @property string $id
- * @property string $master_id
- * @property string $group_name
- * @property string $description
- * @property string $announcement
- * @property integer $admin_num
- * @property integer $user_num
- * @property integer $creation_time
+ * @property string $user_id
+ * @property string $content
+ * @property string $publish_time
+ * @property string $reply
+ * @property string $support
  *
  * The followings are the available model relations:
+ * @property User $user
+ * @property UserTrendsPic[] $userTrendsPics
+ * @property UserTrendsReply[] $userTrendsReplies
  * @property User[] $xcmsUsers
- * @property GroupMessage[] $groupMessages
- * @property User $master
  */
-class Groups extends CmsActiveRecord
+class UserTrends extends CmsActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{groups}}';
+		return '{{user_trends}}';
 	}
 
 	/**
@@ -36,14 +35,12 @@ class Groups extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, master_id, group_name, admin_num, creation_time', 'required'),
-			array('admin_num, user_num, creation_time', 'numerical', 'integerOnly'=>true),
-			array('id, master_id', 'length', 'max'=>11),
-			array('group_name', 'length', 'max'=>15),
-			array('description, announcement', 'safe'),
+			array('user_id, content, publish_time', 'required'),
+			array('user_id, publish_time', 'length', 'max'=>11),
+			array('reply, support', 'length', 'max'=>5),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, master_id, group_name, description, announcement, admin_num, user_num, creation_time', 'safe', 'on'=>'search'),
+			array('id, user_id, content, publish_time, reply, support', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,9 +52,10 @@ class Groups extends CmsActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'xcmsUsers' => array(self::MANY_MANY, 'User', '{{user_own_group}}(group_id, user_id)'),
-			'groupMessages' => array(self::HAS_MANY, 'GroupMessage', 'receive_group'),
-			'master' => array(self::BELONGS_TO, 'User', 'master_id'),
+			'user' => array(self::BELONGS_TO, 'UserModel', 'user_id'),
+			'trendsPics' => array(self::HAS_MANY, 'UserTrendsPic', 'msg_id'),
+			'trendsReplies' => array(self::HAS_MANY, 'UserTrendsReply', 'trends_id'),
+			'supportedUser' => array(self::MANY_MANY, 'User', '{{user_trends_support}}(trends_id, user_id)'),
 		);
 	}
 
@@ -68,13 +66,11 @@ class Groups extends CmsActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'master_id' => 'Master',
-			'group_name' => 'Group Name',
-			'description' => 'Description',
-			'announcement' => 'Announcement',
-			'admin_num' => 'Admin Num',
-			'user_num' => 'User Num',
-			'creation_time' => 'Creation Time',
+			'user_id' => 'User',
+			'content' => 'Content',
+			'publish_time' => 'Publish Time',
+			'reply' => 'Reply',
+			'support' => 'Support',
 		);
 	}
 
@@ -97,13 +93,11 @@ class Groups extends CmsActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('master_id',$this->master_id,true);
-		$criteria->compare('group_name',$this->group_name,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('announcement',$this->announcement,true);
-		$criteria->compare('admin_num',$this->admin_num);
-		$criteria->compare('user_num',$this->user_num);
-		$criteria->compare('creation_time',$this->creation_time);
+		$criteria->compare('user_id',$this->user_id,true);
+		$criteria->compare('content',$this->content,true);
+		$criteria->compare('publish_time',$this->publish_time,true);
+		$criteria->compare('reply',$this->reply,true);
+		$criteria->compare('support',$this->support,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -111,18 +105,10 @@ class Groups extends CmsActiveRecord
 	}
 
 	/**
-	 * @return CDbConnection the database connection used for this class
-	 */
-	public function getDbConnection()
-	{
-		return Yii::app()->dbLocal;
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Groups the static model class
+	 * @return UserTrends the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

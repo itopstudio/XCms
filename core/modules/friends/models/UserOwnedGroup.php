@@ -1,27 +1,21 @@
 <?php
 
 /**
- * This is the model class for table "{{chat_room}}".
+ * This is the model class for table "{{user_owned_group}}".
  *
- * The followings are the available columns in table '{{chat_room}}':
- * @property string $id
- * @property string $room_name
- * @property integer $user_num
- * @property string $description
- * @property integer $admin_num
- *
- * The followings are the available model relations:
- * @property User[] $xcmsUsers
- * @property ChatMessage[] $chatMessages
+ * The followings are the available columns in table '{{user_owned_group}}':
+ * @property string $group_id
+ * @property string $user_id
+ * @property string $remark
  */
-class ChatRoom extends CmsActiveRecord
+class UserOwnedGroup extends CmsActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{chat_room}}';
+		return '{{user_owned_group}}';
 	}
 
 	/**
@@ -32,13 +26,12 @@ class ChatRoom extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('room_name, admin_num', 'required'),
-			array('user_num, admin_num', 'numerical', 'integerOnly'=>true),
-			array('room_name', 'length', 'max'=>15),
-			array('description', 'safe'),
+			array('group_id, user_id', 'required'),
+			array('group_id, user_id', 'length', 'max'=>11),
+			array('remark', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, room_name, user_num, description, admin_num', 'safe', 'on'=>'search'),
+			array('group_id, user_id, remark', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,8 +43,6 @@ class ChatRoom extends CmsActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'xcmsUsers' => array(self::MANY_MANY, 'User', '{{user_own_chat}}(room_id, user_id)'),
-			'chatMessages' => array(self::HAS_MANY, 'ChatMessage', 'receive_room'),
 		);
 	}
 
@@ -61,11 +52,9 @@ class ChatRoom extends CmsActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'room_name' => 'Room Name',
-			'user_num' => 'User Num',
-			'description' => 'Description',
-			'admin_num' => 'Admin Num',
+			'group_id' => 'Group',
+			'user_id' => 'User',
+			'remark' => 'Remark',
 		);
 	}
 
@@ -87,11 +76,9 @@ class ChatRoom extends CmsActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('room_name',$this->room_name,true);
-		$criteria->compare('user_num',$this->user_num);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('admin_num',$this->admin_num);
+		$criteria->compare('group_id',$this->group_id,true);
+		$criteria->compare('user_id',$this->user_id,true);
+		$criteria->compare('remark',$this->remark,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -99,18 +86,10 @@ class ChatRoom extends CmsActiveRecord
 	}
 
 	/**
-	 * @return CDbConnection the database connection used for this class
-	 */
-	public function getDbConnection()
-	{
-		return Yii::app()->dbLocal;
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return ChatRoom the static model class
+	 * @return UserOwnedGroup the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

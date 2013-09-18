@@ -100,7 +100,9 @@ class ConfigBase{
 // 					'errorAction'=>'error/index',
 // 				),
 			),
-			
+			'params' => array(
+				'frontUserStateKeyPrefix' => 'FrontU'
+			)
 			
 		);
 	}

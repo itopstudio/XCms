@@ -10,4 +10,25 @@ class CmsModule extends CWebModule{
 	protected function init(){
 		Yii::app()->setComponent('messages', array('basePath'=>Yii::getPathOfAlias('cms.messages')));
 	}
+	
+	/**
+	 * load module level model,default to load all models
+	 * 
+	 * @param string $moduleId
+	 * @param string $models
+	 */
+	public static function loadModels($moduleId,$models='*'){
+		$module = Yii::app()->getModule($moduleId);
+		if ( $module !== null ){
+			$module->loadSelfModels();
+		}
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	public function loadSelfModels(){
+		throw new Exception(Yii::t('cmsModule','loadSelfModels must be overwrite'));
+	}
 }
