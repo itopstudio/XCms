@@ -127,8 +127,6 @@ class CmsController extends CController{
 	}
 	
 	public function response($code=200,$message='',$data=null,$format='json',$contentType='text/html'){
-		$status_header = 'HTTP/1.1 '.$code.' '.$this->getStatusCodeMsg($code);
-		header($status_header);
 		header('Content-type: '.$contentType);
 		$response = array(
 				'status' => $code,
@@ -139,21 +137,6 @@ class CmsController extends CController{
 			echo json_encode($response);
 		}
 		$this->app->end();
-	}
-	
-	public function getStatusCodeMsg($code){
-		static $codes = Array(
-				200 => 'OK',
-				400 => 'Bad Request',
-				401 => 'Unauthorized',
-				402 => 'Payment Required',
-				403 => 'Forbidden',
-				404 => 'Not Found',
-				405 => 'Method Not Allowed',
-				500 => 'Internal Server Error',
-				501 => 'Not Implemented',
-		);
-		return (isset($codes[$code])) ? $codes[$code] : '';
 	}
 	
 	/**

@@ -10,19 +10,42 @@ class getRandomListAction extends CmsAction{
 	public function run($resourceId){
 		$loginedId = $this->app->getUser()->getId();
 		if ( $loginedId !== $resourceId ){
-			$this->response(400,Yii::t('friends','can not get random list'));
+			$this->response(403,Yii::t('friends','can not get random list'));
 		}
 		$module = $this->getController()->getModule();
 		$listSize = $this->getQuery('size',10);
 		$userManager = $this->app->getComponent($module->userManagerId);
-		$users = $userManager->getUserRandom($listSize);
+		$with = array(
+				'with' => array(
+					'baseUser' => array(
+						'select' => 'id','nickname','icon',
+						'with' => array(
+							'trends' => array(
+								'limit' => 1,
+								'offset' => 0,
+								'order' => 'publish_time DESC'
+							),
+						),
+					),
+				)
+		);
+		$users = $userManager->getUserRandom($listSize,$with);
 		
 		$data = array();
-		$attributeNames = array('id','nickname');
+		$attributeNames = array('id','nickname','icon');
 		foreach ( $users as $user ){
-			$data[] = $user->getAttributes($attributeNames);
+			$attributes = $user->getAttributes($attributeNames);
+			
+			$trends = $user->getRelated('baseUser')->getRelated('trends');
+			if ( !empty($trends) ){
+				$attributes['trend'] = $trends[0]->getAttribute('content');
+			}else {
+				$attributes['trend'] = array();
+			}
+			
+			$data[] = $attributes;
 		}
 		
-		$this->response(200,'',$data);
+		$this->response(300,'',$data);
 	}
 }

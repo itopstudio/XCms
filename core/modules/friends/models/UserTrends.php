@@ -35,12 +35,9 @@ class UserTrends extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, content, publish_time', 'required'),
-			array('user_id, publish_time', 'length', 'max'=>11),
-			array('reply, support', 'length', 'max'=>5),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, content, publish_time, reply, support', 'safe', 'on'=>'search'),
+			array('user_id, content', 'required','message'=>'{attribute}'.Yii::t('friends','can not be empty')),
+			array('user_id', 'length', 'max'=>11),
+			array('publish_time, reply, support','safe'),
 		);
 	}
 
@@ -53,7 +50,7 @@ class UserTrends extends CmsActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'user' => array(self::BELONGS_TO, 'UserModel', 'user_id'),
-			'trendsPics' => array(self::HAS_MANY, 'UserTrendsPic', 'msg_id'),
+			'pics' => array(self::HAS_MANY, 'UserTrendsPic', 'msg_id'),
 			'trendsReplies' => array(self::HAS_MANY, 'UserTrendsReply', 'trends_id'),
 			'supportedUser' => array(self::MANY_MANY, 'User', '{{user_trends_support}}(trends_id, user_id)'),
 		);
@@ -66,11 +63,11 @@ class UserTrends extends CmsActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'user_id' => 'User',
-			'content' => 'Content',
-			'publish_time' => 'Publish Time',
-			'reply' => 'Reply',
-			'support' => 'Support',
+			'user_id' => '用户',
+			'content' => '动态内容',
+			'publish_time' => '发布时间',
+			'reply' => '回复数量',
+			'support' => '赞数量',
 		);
 	}
 

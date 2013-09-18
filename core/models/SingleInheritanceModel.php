@@ -173,7 +173,11 @@ abstract class SingleInheritanceModel extends CmsActiveRecord{
 		
 		$parent = $this->getParentInUse(true);
 		if ( $parent !== null ){
-			$selfAttributes = array_merge($selfAttributes,$parent->getAttributes($names));
+			foreach ( $parent->getAttributes($names) as $name => $value ){
+				if ( !isset($selfAttributes[$name]) ){
+					$selfAttributes[$name] = $value;
+				}
+			}
 		}
 		return $selfAttributes;
 	}
@@ -193,11 +197,13 @@ abstract class SingleInheritanceModel extends CmsActiveRecord{
 	 * @see CModel::validate()
 	 */
 	public function validate($attributes=null,$clearErrors=true){
-		$parent = $this->getParentInUse();
-		if ( $parent !== null ){
-			$parentValidated = $parent->validate($attributes,$clearErrors);
-			if ( $parentValidated === false ){
-				return false;
+		if ( $this->_setParentBeforeGet !== null ){//parent's attribute has set.so needs to be validated
+			$parent = $this->getParentInUse();
+			if ( $parent !== null ){
+				$parentValidated = $parent->validate($attributes,$clearErrors);
+				if ( $parentValidated === false ){
+					return false;
+				}
 			}
 		}
 		return parent::validate($attributes,$clearErrors);

@@ -8,6 +8,19 @@
  */
 class publishTrendAction extends CmsAction{
 	public function run($resourceId){
-		
+		$loginedId = $this->app->getUser()->getId();
+		if ( $loginedId !== $resourceId ){
+			$this->response(402);
+		}
+		$data = array('content'=>$this->getPost('content'));
+		$data['user_id'] = $loginedId;
+
+		$manager = $this->app->getComponent('trendsManager');
+		$result = $manager->publish($data);
+		if ( $result === true ){
+			$this->response(200);
+		}else {
+			$this->response(201,$result);
+		}
 	}
 }

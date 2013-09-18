@@ -23,11 +23,16 @@ abstract class BaseUserManager extends CApplicationComponent{
 	/**
 	 * 
 	 * @param int $listSize
+	 * @param CDbCriteria $criteria
 	 */
-	public function getUserRandom($listSize){
+	public function getUserRandom($listSize,$criteria=null){
 		$count = $this->count();
 		
-		$criteria = new CDbCriteria();
+		if ( $criteria === null ){
+			$criteria = new CDbCriteria();
+		}elseif ( is_array($criteria) ){
+			$criteria = new CDbCriteria($criteria);
+		}
 		$criteria->limit = $listSize;
 		if ( $listSize >= $count ){
 			$criteria->offset = 0;

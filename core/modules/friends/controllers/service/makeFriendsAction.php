@@ -17,7 +17,7 @@ class makeFriendsAction extends CmsAction{
 		if ( $resourceId === $loginedUid ){
 			$with = $this->getPost('with');
 			if ( $with === $loginedUid ){
-				$this->response(400,Yii::t('friends','can not make friends with yourself'));
+				$this->response(202,Yii::t('friends','can not make friends with yourself'));
 			}
 			$interest = new UserInterest();
 			
@@ -30,11 +30,11 @@ class makeFriendsAction extends CmsAction{
 			if ( $interest->save() ){
 				$this->response(200,Yii::t('friends','say hello success'));
 			}else {
-				$this->response(400,'',$interest->getErrors());
+				$this->response(201,'',$interest->getErrors());
 			}
 			
 		}else {
-			$this->response(400,Yii::t('friends','can not make friends with him or her'));
+			$this->response(403,Yii::t('friends','can not make friends with him or her'));
 		}
 	}
 }

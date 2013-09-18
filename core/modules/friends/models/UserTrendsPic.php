@@ -29,9 +29,10 @@ class UserTrendsPic extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, msg_id, url', 'required'),
-			array('id, msg_id', 'length', 'max'=>11),
+			array('msg_id, url', 'required'),
+			array('msg_id', 'length', 'max'=>11),
 			array('url', 'length', 'max'=>255),
+			array('id','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, msg_id, url', 'safe', 'on'=>'search'),

@@ -18,6 +18,9 @@ class FriendsModule extends CmsModule{
 		Yii::import('friends.components.*');
 		Yii::import('friends.models.*');
 		Yii::app()->getUser()->setStateKeyPrefix(Yii::app()->params['frontUserStateKeyPrefix']);
+		Yii::app()->setComponent('trendsManager',array(
+				'class' => 'friends.components.TrendsManager'
+		));
 	}
 	
 	public function loadSelfModels(){

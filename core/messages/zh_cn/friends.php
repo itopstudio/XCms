@@ -14,5 +14,6 @@ return array(
 		'can not make friends with yourself' => '不能向自己打招呼',
 		'you can only get your say hello list' => '只能获取自己的打招呼列表',
 		'you can only remove your friends' => '只能删除自己的好友',
-		'can not get random list' => '无法获取列表'
+		'can not get random list' => '无法获取列表',
+		'can not be empty' => '不能为空'
 );

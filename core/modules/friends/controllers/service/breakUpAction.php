@@ -13,12 +13,12 @@ class breakUpAction extends CmsAction{
 		if ( $resourceId === $loginedUid ){
 			$with = $this->getDelete('with');
 			if ( $with === $loginedUid ){
-				$this->response(400,Yii::t('friends','can not remove friend'));
+				$this->response(202,Yii::t('friends','can not remove friend'));
 			}
 			UserInterest::model()->breakUp($loginedUid, $with);
 			$this->response(200);
 		}else {
-			$this->response(400,Yii::t('friends','you can only remove your friends'));
+			$this->response(402,Yii::t('friends','you can only remove your friends'));
 		}
 	}
 }
