@@ -16,13 +16,14 @@ class getRandomListAction extends CmsAction{
 		$listSize = $this->getQuery('size',10);
 		$userManager = $this->app->getComponent($module->userManagerId);
 		$with = array(
+				'select' => 'icon',
 				'with' => array(
 					'baseUser' => array(
-						'select' => 'id','nickname','icon',
+						'select' => 'id,nickname',
 						'with' => array(
 							'trends' => array(
 								'limit' => 1,
-								'offset' => 0,
+					 			'offset' => 0,
 								'order' => 'publish_time DESC'
 							),
 						),

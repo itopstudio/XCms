@@ -94,9 +94,10 @@ class UserModel extends SingleInheritanceModel
 			'AuthGroups' => array(self::MANY_MANY, 'AuthGroups', '{{user_group}}(user_id, group_id)'),
 			'AuthRoles' => array(self::MANY_MANY, 'AuthRoles', '{{user_role}}(user_id, role_id)'),
 			'friends' => array(self::HAS_MANY,'UserInterest','follower','condition'=>'status=1'),
-			'chatGroups' => array(self::MANY_MANY,'Groups','{{user_own_group}}(group_id,user_id)'),
-			'chatRooms' => array(self::MANY_MANY,'ChatRoom','{{user_own_chat}}(room_id,user_id)'),
-			'trends' => array(self::HAS_MANY,'UserTrends','user_id')
+			'chatGroups' => array(self::MANY_MANY,'Groups','{{user_owned_group}}(group_id,user_id)'),
+			'chatRooms' => array(self::MANY_MANY,'ChatRoom','{{user_owned_chat}}(room_id,user_id)'),
+			'trends' => array(self::HAS_MANY,'UserTrends','user_id'),
+			'frontUser' => array(self::HAS_ONE,'SqbUser','id')
 		);
 	}
 
@@ -204,48 +205,5 @@ class UserModel extends SingleInheritanceModel
 		$security = Yii::app()->getSecurityManager();
 		$this->_changeUUID = true;
 		$this->setAttribute('password',$security->generate($newPassword));
-	}
-	
-	public function getUserRelationInfo($uid){
-		CmsModule::loadModels('friends');
-		$raw = $this->with(array(
-				'friends' => array(
-						'with'=>array(
-								'followed'=>array(
-										'select'=>'id,nickname'
-								),
-						),
-						'select'=>'remark'
-				),
-				'chatRooms',
-				'chatGroups'
-		))->findByPk($uid,array('select'=>'id'));
-		if ( empty($raw) ){
-			return array();
-		}
-		$return = array(
-				'alias' => 'user'.$uid,
-				'friends' => array(),
-				'chatRooms' => array(),
-				'chatGroups' => array(),
-				'tags' => array()
-		);
-		foreach ( $raw->getRelated('friends') as $friend ){
-			$follwed = $friend->getRelated('followed');
-			$return['friends'][] = array(
-					'id' => $follwed->getAttribute('id'),
-					'nickname' => $follwed->getAttribute('nickname'),
-					'remark' => $friend->getAttribute('remark'),
-			);
-		}
-		foreach ( $raw->getRelated('chatRooms') as $chatRoom ){
-			$return['chatRooms'][] = $chatRoom->getAttributes();
-			$return['tags'][] = 'room'.$chatRoom->getAttribute('id');
-		}
-		foreach ( $raw->getRelated('chatGroups') as $chatGroup ){
-			$return['chatGroups'][] = $chatGroup->getAttributes();
-			$return['tags'][] = 'group'.$chatGroup->getAttribute('id');
-		}
-		return $return;
 	}
 }
