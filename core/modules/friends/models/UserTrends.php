@@ -51,7 +51,7 @@ class UserTrends extends CmsActiveRecord
 		return array(
 			'user' => array(self::BELONGS_TO, 'UserModel', 'user_id'),
 			'pics' => array(self::HAS_MANY, 'UserTrendsPic', 'msg_id'),
-			'trendsReplies' => array(self::HAS_MANY, 'UserTrendsReply', 'trends_id'),
+			'replies' => array(self::HAS_MANY, 'UserTrendsReply', 'trends_id'),
 			'supportedUser' => array(self::MANY_MANY, 'User', '{{user_trends_support}}(trends_id, user_id)'),
 		);
 	}

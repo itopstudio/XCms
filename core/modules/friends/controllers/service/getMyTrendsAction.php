@@ -1,12 +1,12 @@
 <?php
 /**
- * @name replyTrendAction.php UTF-8
+ * @name getMyTrendsAction.php UTF-8
  * @author ChenJunAn<lancelot1215@gmail.com>
  * 
  * Date 2013-9-17
  * Encoding UTF-8
  */
-class replyTrendAction extends CmsAction{
+class getMyTrendsAction extends CmsAction{
 	public function run($resourceId){
 		$loginedId = $this->app->getUser()->getId();
 		if ( $loginedId !== $resourceId ){

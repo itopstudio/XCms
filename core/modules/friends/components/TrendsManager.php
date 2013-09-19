@@ -110,4 +110,45 @@ class TrendsManager extends CApplicationComponent{
 		$trend->delete();
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @param int $uid
+	 * @return array
+	 */
+	public function findMyTrends($uid){
+		$criteria = new CDbCriteria();
+		$criteria->alias = 'trends';
+		$criteria->condition = 'trends.user_id='.$uid;
+		
+		$myTrends = UserTrends::model()->with(array(
+				'pics',
+				'replies' => array(
+						'select' => 'id,content',
+						'with' => array(
+								'user' => array(
+										'select' => 'nickname',
+								)
+						)
+				)
+		))->findAll($criteria);
+		$trends = array();
+		foreach ( $myTrends as $key => $myTrend ){
+			$trends[$key]['data'] = $myTrend->getAttributes();
+			$trends[$key]['replies'] = array();
+			
+			$pics = $myTrend->getRelated('pics');
+			foreach ( $pics as $pic ){
+				$trends[$key]['data']['pics'][] = $pic->getAttribute('url');
+			}
+			
+			$replies = $myTrend->getRelated('replies');
+			foreach ( $replies as $i => $reply ){
+				$trends[$key]['replies'][$i]['content'] = $reply->getAttribute('content');
+				$trends[$key]['replies'][$i]['user'] = $reply->getRelated('user')->getAttribute('nickname');
+			}
+		}
+		
+		return $trends;
+	}
 }
