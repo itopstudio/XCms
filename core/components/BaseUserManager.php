@@ -14,6 +14,7 @@ abstract class BaseUserManager extends CApplicationComponent{
 	 * @param array $params
 	 */
 	abstract public function findAll($criteria=null,$params=array());
+	abstract public function findByPk($pk,$criteria=null,$params=array());
 	/**
 	 * 
 	 * @param CDbCriteria $criteria

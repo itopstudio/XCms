@@ -8,6 +8,16 @@
  */
 class getFriendsTrendsAction extends CmsAction{
 	public function run($resourceId){
+		$loginedId = $this->app->getUser()->getId();
+		if ( $loginedId !== $resourceId ){
+			$this->response(402);
+		}
 		
+		$module = $this->getController()->getModule();
+		$manager = $this->app->getComponent('trendsManager');
+		$userManager = $this->app->getComponent($module->userManagerId);
+		
+		$data = $manager->findFriendsTrends($userManager,$loginedId);
+		$this->response(300,'',$data);
 	}
 }

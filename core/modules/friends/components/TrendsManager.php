@@ -151,4 +151,70 @@ class TrendsManager extends CApplicationComponent{
 		
 		return $trends;
 	}
+	
+	/**
+	 * 
+	 * @param BaseUserManager $userManager
+	 * @param int $uid
+	 * @return array
+	 */
+	public function findFriendsTrends($userManager,$uid){
+		$criteria = array(
+				'with' => array(
+						'baseUser' => array(
+								'select' => 'id,nickname',
+								'with' => array(
+										'friends' => array(
+												'with' => array(
+														'followed' => array(
+																'alias' => 'friend',
+																'select' => 'friend.id,friend.nickname',
+																'with' => array(
+																		'frontUser' => array(
+																				'select' => 'icon'
+																		),
+																		'trends' => array(
+																				'with' => array(
+																						'pics',
+																						'replies',
+																				),
+																		),
+																),
+														),
+												),
+										),
+								),
+						),
+				),
+		);
+		
+		$friendsData = $userManager->findByPk($uid,$criteria);
+		
+		var_dump($friendsData);
+	}
+	
+	/**
+	 * 
+	 * @param UserTrends $trend
+	 * @param string $content
+	 * @return boolean return array if error
+	 */
+	public function reply($trend,$content){
+		$data = array(
+				'user_id' => $trend->getAttribute('user_id'),
+				'trends_id' => $trend->getAttribute('id'),
+				'content' => $content
+		);
+		$reply = new UserTrendsReply();
+		$reply->attributes = $data;
+		
+		if ( $reply->save() ){
+			$replyNum = $trend->getAttribute('reply')+1;
+			$trend->setAttribute('reply',$replyNum);
+			$trend->save();
+			return true;
+		}else {
+			return $reply->getErrors();
+		}
+	}
 }

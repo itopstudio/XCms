@@ -31,8 +31,9 @@ class UserTrendsReply extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, trends_id, user_id, content', 'required'),
-			array('id, trends_id, user_id', 'length', 'max'=>11),
+			array('trends_id, user_id, content', 'required'),
+			array('trends_id, user_id', 'length', 'max'=>11),
+			array('id','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, trends_id, user_id, content', 'safe', 'on'=>'search'),
