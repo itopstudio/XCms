@@ -23,7 +23,7 @@ class sayHelloAction extends CmsAction{
 			$userManager = $this->app->getComponent($module->userManagerId);
 			
 			$result = $userManager->sayHello($loginedUid,$to);
-			if ( $result ){
+			if ( $result === true || $result->hasErrors() === false ){
 				$this->response(200,Yii::t('friends','say hello success'));
 			}else {
 				$this->response(201,'',$result->getErrors());

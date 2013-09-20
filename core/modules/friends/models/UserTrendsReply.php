@@ -33,7 +33,7 @@ class UserTrendsReply extends CmsActiveRecord
 		return array(
 			array('trends_id, user_id, content', 'required'),
 			array('trends_id, user_id', 'length', 'max'=>11),
-			array('id','safe'),
+			array('id,time','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, trends_id, user_id, content', 'safe', 'on'=>'search'),

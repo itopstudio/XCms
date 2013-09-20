@@ -34,6 +34,7 @@ class UserInterest extends CmsActiveRecord
 			array('follower, followed, status', 'required'),
 			array('status', 'numerical', 'integerOnly'=>true),
 			array('follower, followed', 'length', 'max'=>11),
+			array('followed','exist','className'=>'UserModel','attributeName'=>'id','message'=>'被关注用户不存在'),
 			array('remark', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

@@ -84,7 +84,9 @@ abstract class BaseUserManager extends CApplicationComponent{
 	 */
 	public function sayHello($from,$to){
 		$interest = new UserInterest();
-		if ( $this->isFriend($from,$to) ){
+		if ( $from === $to ){
+			$interest->addError('follower',Yii::t('friends','can not make friends with yourself'));
+		}elseif ( $this->isFriend($from,$to) ){
 			$interest->addError('follower',Yii::t('friends','you have already been friends'));
 		}elseif ( $this->hasSaidHello($from, $to) ){
 			$interest->addError('follower',Yii::t('friends','you have already said hello'));
@@ -201,6 +203,7 @@ abstract class BaseUserManager extends CApplicationComponent{
 		if ( $this->hasDenied($follower, $followed) === false ){
 			$interest->setAttribute('status',2);
 			$interest->save();
+			UserInterest::model()->deleteAll('follower=:followed AND followed=:follower',array(':follower'=>$follower,'followed'=>$followed));
 		}
 		return true;
 	}

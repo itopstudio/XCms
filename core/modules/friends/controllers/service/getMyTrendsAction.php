@@ -13,7 +13,7 @@ class getMyTrendsAction extends CmsAction{
 			$this->response(402);
 		}
 		$manager = $this->app->getComponent('trendsManager');
-		$result = $manager->findMyTrends($loginedId);
+		$result = $manager->findUserTrends($loginedId);
 		$this->response(300,'',$result);
 	}
 }

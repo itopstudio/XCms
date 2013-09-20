@@ -8,10 +8,14 @@
  */
 class TrendsManager extends CApplicationComponent{
 	public $uploadDir = null;
+	public $uploadUrl = null;
 	
 	public function init(){
 		if ( $this->uploadDir === null ){
 			$this->uploadDir = Yii::app()->basePath.DS.'..'.DS.'upload'.DS.'trends'.DS;
+		}
+		if ( $this->uploadUrl === null ){
+			$this->uploadUrl = Yii::app()->baseUrl.'/upload/trends/';
 		}
 	}
 	
@@ -50,8 +54,8 @@ class TrendsManager extends CApplicationComponent{
 		}
 		$uid = $trend->getAttribute('user_id');
 		$publishTime = $trend->getAttribute('publish_time');
-		$dir = $this->resolveDirName($publishTime);
-		$fileName = $this->resolveFileName(array($uid,$publishTime),$picFile);
+		$dir = $this->resolvePicDirName($publishTime);
+		$fileName = $this->resolvePicFileName(array($uid,$publishTime),$picFile);
 		
 		$attributes = array(
 				'msg_id' => $trend->getPrimaryKey(),
@@ -77,7 +81,7 @@ class TrendsManager extends CApplicationComponent{
 	 * @param string $createIfNotDir
 	 * @return string
 	 */
-	public function resolveDirName($time,$createIfNotDir=true){
+	public function resolvePicDirName($time,$createIfNotDir=true){
 		$dir = $this->uploadDir.DS.date('Ymd',$time).DS;
 		if ( $createIfNotDir === true && !is_dir($dir) ){
 			mkdir($dir,0777);
@@ -86,12 +90,21 @@ class TrendsManager extends CApplicationComponent{
 	}
 	
 	/**
+	 *
+	 * @param int $time
+	 * @return string
+	 */
+	public function resolvePicUrl($time){
+		return $this->uploadUrl.'/'.date('Ymd',$time).'/';
+	}
+	
+	/**
 	 * 
 	 * @param mixed $dependence
 	 * @param CUploadedFile $file
 	 * @return string
 	 */
-	public function resolveFileName($dependence,$file){
+	public function resolvePicFileName($dependence,$file){
 		$extName = $file->getExtensionName();
 		return md5(json_encode($dependence)).'.'.$extName;
 	}
@@ -104,7 +117,7 @@ class TrendsManager extends CApplicationComponent{
 	public function delete($trend){
 		$pics = $trend->getRelated('pics');
 		foreach ( $pics as $pic ){
-			$dir = $this->resolveDirName($trend->publish_time);
+			$dir = $this->resolvePicDirName($trend->publish_time);
 			unlink($dir.$pic->url);
 		}
 		$trend->delete();
@@ -116,7 +129,7 @@ class TrendsManager extends CApplicationComponent{
 	 * @param int $uid
 	 * @return array
 	 */
-	public function findMyTrends($uid){
+	public function findUserTrends($uid){
 		$criteria = new CDbCriteria();
 		$criteria->alias = 'trends';
 		$criteria->condition = 'trends.user_id='.$uid;
@@ -138,8 +151,9 @@ class TrendsManager extends CApplicationComponent{
 			$trends[$key]['replies'] = array();
 			
 			$pics = $myTrend->getRelated('pics');
+			$picUrl = $this->resolvePicUrl($myTrend->getAttribute('publish_time'));
 			foreach ( $pics as $pic ){
-				$trends[$key]['data']['pics'][] = $pic->getAttribute('url');
+				$trends[$key]['data']['pics'][] = $picUrl.$pic->getAttribute('url');
 			}
 			
 			$replies = $myTrend->getRelated('replies');
@@ -173,13 +187,18 @@ class TrendsManager extends CApplicationComponent{
 																'select' => 'friend.id,friend.nickname',
 																'with' => array(
 																		'frontUser' => array(
-																				'select' => 'icon'
+																				'alias' => 'frontUser',
+																				'select' => 'frontUser.icon'
 																		),
 																		'trends' => array(
+																				'alias' => 'trends',
 																				'with' => array(
 																						'pics',
-																						'replies',
+																						'replies' => array(
+																								'order' => 'time DESC'
+																						),
 																				),
+																				'order' => 'publish_time DESC'
 																		),
 																),
 														),
@@ -194,9 +213,37 @@ class TrendsManager extends CApplicationComponent{
 		if ( $user === null ){
 			return array();
 		}
-		$friends = $user->getRelated('baseUser')->getRelated('friends');
-		var_dump($friends);
 		
+		$data = array();
+		$friends = $user->getRelated('baseUser')->getRelated('friends');
+		foreach ( $friends as $count => $friend ){
+			$f = $friend->getRelated('followed');
+			$data[$count]['userInfo'] = array(
+					'id' => $f->getAttribute('id'),
+					'nickname' => $f->getAttribute('nickname'),
+					'icon' => $f->getRelated('frontUser')->getAttribute('icon')
+			);
+			
+			$trends = $f->getRelated('trends');
+			$data[$count]['trends'] = array();
+			foreach ( $trends as $tCount => $trend ){
+				$data[$count]['trends'][$tCount] = array(
+						'id' => $trend->getPrimaryKey(),
+						'content' => $trend->getAttribute('content'),
+						'publish_time' => $trend->getAttribute('publish_time')
+				);
+				$pics = $trend->getRelated('pics');
+				$picUrl = $this->resolvePicUrl($trend->getAttribute('publish_time'));
+				foreach ( $pics as $pic ){
+					$data[$count]['trends'][$tCount]['pics'][] = $picUrl.$pic->getAttribute('url');
+				}
+				$replies = $trend->getRelated('replies');
+				foreach ( $replies as $reply ){
+					$data[$count]['trends'][$tCount]['replies'][] = $reply->getAttributes();
+				}
+			}
+		}
+		return $data;
 	}
 	
 	/**
@@ -209,7 +256,8 @@ class TrendsManager extends CApplicationComponent{
 		$data = array(
 				'user_id' => $trend->getAttribute('user_id'),
 				'trends_id' => $trend->getAttribute('id'),
-				'content' => $content
+				'content' => $content,
+				'time' => time()
 		);
 		$reply = new UserTrendsReply();
 		$reply->attributes = $data;
