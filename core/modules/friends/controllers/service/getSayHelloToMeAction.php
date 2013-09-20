@@ -10,7 +10,9 @@ class getSayHelloToMeAction extends CmsAction{
 	public function run($resourceId){
 		$loginedUid = $this->app->getUser()->getId();
 		if ( $loginedUid === $resourceId ){
-			$list = UserInterest::model()->getSayHelloList($loginedUid);
+			$module = $this->getController()->getModule();
+			$userManager = $this->app->getComponent($module->userManagerId);
+			$list = $userManager->getSayHelloList($loginedUid);
 			$this->response(300,'',$list);
 		}else {
 			$this->response(403,Yii::t('friends','you can only get your say hello list'));

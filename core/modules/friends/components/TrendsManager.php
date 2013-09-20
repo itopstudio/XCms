@@ -160,11 +160,13 @@ class TrendsManager extends CApplicationComponent{
 	 */
 	public function findFriendsTrends($userManager,$uid){
 		$criteria = array(
+				'select' => 'id' ,
 				'with' => array(
 						'baseUser' => array(
 								'select' => 'id,nickname',
 								'with' => array(
 										'friends' => array(
+												'select' => 'remark',
 												'with' => array(
 														'followed' => array(
 																'alias' => 'friend',
@@ -188,9 +190,13 @@ class TrendsManager extends CApplicationComponent{
 				),
 		);
 		
-		$friendsData = $userManager->findByPk($uid,$criteria);
+		$user = $userManager->findByPk($uid,$criteria);
+		if ( $user === null ){
+			return array();
+		}
+		$friends = $user->getRelated('baseUser')->getRelated('friends');
+		var_dump($friends);
 		
-		var_dump($friendsData);
 	}
 	
 	/**

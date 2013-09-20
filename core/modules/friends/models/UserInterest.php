@@ -32,7 +32,6 @@ class UserInterest extends CmsActiveRecord
 		// will receive user inputs.
 		return array(
 			array('follower, followed, status', 'required'),
-			array('followed','unionUnique','unionAttributes'=>array('follower'),'message'=>Yii::t('friends','you have already said hello')),
 			array('status', 'numerical', 'integerOnly'=>true),
 			array('follower, followed', 'length', 'max'=>11),
 			array('remark', 'length', 'max'=>10),
@@ -105,41 +104,5 @@ class UserInterest extends CmsActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
-	}
-	
-	/**
-	 * find user who want to make friends with me
-	 * 
-	 * @param int $uid
-	 * @return array
-	 */
-	public function getSayHelloList($uid){
-		$criteria = new CDbCriteria();
-		$criteria->with = array('follower'=>array(
-				'select' => 'nickname'
-		));
-		$criteria->condition = 'followed=:uid AND status=0';
-		$criteria->params = array(':uid'=>$uid);
-		
-		$list = $this->findAll($criteria);
-		$return = array();
-		foreach ( $list as $l ){
-			$return[] = $l->getRelated('follower')->getAttributes(array('nickname','id'));
-		}
-		return $return;
-	}
-	
-	/**
-	 * 
-	 * @param int $uid
-	 * @param int $with
-	 * @return boolean
-	 */
-	public function breakUp($uid,$with){
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'follower=:uid AND followed=:with AND status=1';
-		$criteria->params = array(':uid'=>$uid,':with'=>$with);
-		
-		return $this->deleteAll($criteria) > 0;
 	}
 }

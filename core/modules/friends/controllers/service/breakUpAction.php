@@ -15,7 +15,10 @@ class breakUpAction extends CmsAction{
 			if ( $with === $loginedUid ){
 				$this->response(202,Yii::t('friends','can not remove friend'));
 			}
-			UserInterest::model()->breakUp($loginedUid, $with);
+			$module = $this->getController()->getModule();
+			$userManager = $this->app->getComponent($module->userManagerId);
+			
+			$userManager->breakUp($loginedUid, $with);
 			$this->response(200);
 		}else {
 			$this->response(402,Yii::t('friends','you can only remove your friends'));

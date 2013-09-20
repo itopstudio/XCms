@@ -11,16 +11,18 @@ class ServiceController extends CmsController{
 	
 	public function getActionClass(){
 		return array(
-				'createFriends' => array('class'=>'makeFriends'),
-				'removeFriends' => array('class'=>'breakUp'),
+				'createHello' => array('class'=>'sayHello'),
+				'createFriend' => array('class'=>'confirmHello'),
+				'removeFriend' => array('class'=>'breakUp'),
 				'createTrend' => array('class'=>'publishTrend'),
 				'removeTrend',
 				'getMyTrends',
 				'getFriendsTrends',
+				'getTrends',
 				'createReply' => array('class'=>'replyTrend'),
 				'createSupport' => array('class'=>'supportTrend'),
 				'getSayHelloToMe',
-				'getRandomFriendList' => array('class'=>'getRandomList'),
+				'getRandomFriends' => array('class'=>'getRandomList'),
 		);
 	}
 }

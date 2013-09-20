@@ -284,7 +284,7 @@ abstract class SingleInheritanceModel extends CmsActiveRecord{
 	protected function getParentInUse($useRelated=false){
 		$parent = null;
 		if ( $this->_parentRelation !== null ){
-			if ( $this->hasRelated($this->_parentRelation) === false && $this->_setParentBeforeGet === null ){
+			if ( $useRelated && $this->hasRelated($this->_parentRelation) === false && $this->_setParentBeforeGet === null ){
 				$relationClass = $this->getMetaData()->relations[$this->_parentRelation]->className;
 				$parent = new $relationClass;
 				$this->_setParentBeforeGet = $parent;
