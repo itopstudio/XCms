@@ -16,7 +16,7 @@ class getFriendsTrendsAction extends CmsAction{
 		$module = $this->getController()->getModule();
 		$manager = $this->app->getComponent('trendsManager');
 		$userManager = $this->app->getComponent($module->userManagerId);
-		
+
 		$data = $manager->findFriendsTrends($userManager,$loginedId);
 		$this->response(300,'',$data);
 	}

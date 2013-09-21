@@ -232,11 +232,15 @@ class TrendsManager extends CApplicationComponent{
 						'content' => $trend->getAttribute('content'),
 						'publish_time' => $trend->getAttribute('publish_time')
 				);
+				
+				$data[$count]['trends'][$tCount]['pics'] = array();
 				$pics = $trend->getRelated('pics');
 				$picUrl = $this->resolvePicUrl($trend->getAttribute('publish_time'));
 				foreach ( $pics as $pic ){
 					$data[$count]['trends'][$tCount]['pics'][] = $picUrl.$pic->getAttribute('url');
 				}
+				
+				$data[$count]['trends'][$tCount]['replies'] = array();
 				$replies = $trend->getRelated('replies');
 				foreach ( $replies as $reply ){
 					$data[$count]['trends'][$tCount]['replies'][] = $reply->getAttributes();

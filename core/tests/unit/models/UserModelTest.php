@@ -11,16 +11,19 @@ class UserModelTest extends CDbTestCase{
 		parent::setUp();
 		$this->testData = array(
 				'nickname' => 'testNick',
-				'realname' => 'real',
-				'email' => 'testEmail',
-				'password' => 'testPassword',
-				'salt' => 'testSalt',
-				'last_login_time' => time(),
-				'last_login_ip' => '127.0.0.1',
-				'locked' => 1,
-				'surname' => 'surname',
-				'name' => 'testName'
+				'mobile' => '13333333335',
+				'email' => 'testEmail@qq.com',
+				'password' => 'lancelot',
 		);
+	}
+	
+	public function testInsert(){
+		$user = new SqbUser('appReg');
+		$user->attributes = $this->testData;
+		$result = $user->save();
+	
+		$this->assertTrue($result);
+		self::$insertId = $user->id;
 	}
 	
 	public function testSetAttribute(){
@@ -38,15 +41,6 @@ class UserModelTest extends CDbTestCase{
 		foreach ( $user->attributes as $name => $attribute ){
 			$this->assertEquals($this->testData[$name],$attribute);
 		}
-	}
-	
-	public function testInsert(){
-		$user = new Administrators('create');
-		$user->attributes = $this->testData;
-		$result = $user->save();
-		
-		$this->assertTrue($result);
-		self::$insertId = $user->id;
 	}
 	
 	public function testUpdate(){
