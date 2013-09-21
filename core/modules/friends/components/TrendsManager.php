@@ -221,7 +221,8 @@ class TrendsManager extends CApplicationComponent{
 			$data[$count]['userInfo'] = array(
 					'id' => $f->getAttribute('id'),
 					'nickname' => $f->getAttribute('nickname'),
-					'icon' => $f->getRelated('frontUser')->getAttribute('icon')
+					'icon' => $f->getRelated('frontUser')->getAttribute('icon'),
+					'remark' => $friend->getAttribute('remark')
 			);
 			
 			$trends = $f->getRelated('trends');
