@@ -58,7 +58,18 @@ abstract class BaseUserManager extends CApplicationComponent{
 	public function getSayHelloList($uid){
 		$criteria = new CDbCriteria();
 		$criteria->with = array('follower'=>array(
-				'select' => 'id,nickname'
+				'select' => 'id,nickname',
+				'with' => array(
+						'frontUser' => array(
+								'select' => 'icon'
+						),
+						'trends' => array(
+								'select' => 'content,publish_time',
+								'limit' => 1,
+								'offset' => 0,
+								'order' => 'publish_time'
+						)
+				)
 		));
 		$criteria->condition = 'followed=:uid AND status=0';
 		$criteria->params = array(':uid'=>$uid);
@@ -67,11 +78,18 @@ abstract class BaseUserManager extends CApplicationComponent{
 		$return = array();
 		foreach ( $list as $l ){
 			$follower = $l->getRelated('follower');
+			$trends = $follower->getRelated('trends');
 			$return = array(
 					'id' => $follower->getAttribute('id'),
 					'nickname' => $follower->getAttribute('nickname'),
-					'helloId' => $l->getPrimaryKey()
+					'helloId' => $l->getPrimaryKey(),
+					'icon' => $follower->getRelated('frontUser')->getAttribute('icon'),
 			);
+			if ( !empty($trends) ){
+				$return['trend'] = $trends[0]->getAttribute('content');
+			}else {
+				$return['trend'] = '';
+			}
 		}
 		return $return;
 	}
