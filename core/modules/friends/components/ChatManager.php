@@ -21,4 +21,11 @@ class ChatManager extends CApplicationComponent{
 				)
 		));
 	}
+	
+	/**
+	 * @return PushBase
+	 */
+	public function getPusher(){
+		return Yii::app()->getComponent('pusher');
+	}
 }

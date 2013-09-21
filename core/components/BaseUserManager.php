@@ -30,14 +30,23 @@ abstract class BaseUserManager extends CApplicationComponent{
 	 * 
 	 * @param int $listSize
 	 * @param CDbCriteria $criteria
+	 * @param int $exceptUid find user except this id
 	 */
-	public function getUserRandom($listSize,$criteria=null){
-		$count = $this->count();
+	public function getUserRandom($listSize,$criteria=null,$exceptUid=null){
+		$countCondition = null;
+		if ( $exceptUid !== null ){
+			$countCondition = 'id!='.$exceptUid;
+		}
+		$count = $this->count($countCondition);
 		
 		if ( $criteria === null ){
 			$criteria = new CDbCriteria();
 		}elseif ( is_array($criteria) ){
 			$criteria = new CDbCriteria($criteria);
+		}
+		if ( $exceptUid !== null ){
+			$criteria->alias = 'x';
+			$criteria->addCondition('x.'.$countCondition);
 		}
 		$criteria->limit = $listSize;
 		if ( $listSize >= $count ){
@@ -177,7 +186,7 @@ abstract class BaseUserManager extends CApplicationComponent{
 		$follower = $interest->getAttribute('follower');
 		$followed = $interest->getAttribute('followed');
 		
-		if ( $uid !== $follower ){
+		if ( $uid !== $followed ){
 			return Yii::t('friends','can not make friends with him or her');
 		}
 

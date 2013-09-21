@@ -65,6 +65,6 @@ class JPush extends PushBase{
 	 * 用户终端类型
 	 * @var string
 	 */
-	public $platform = null;
+	public $platform = 'ios,android';
 	
 }

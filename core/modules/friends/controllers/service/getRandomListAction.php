@@ -22,15 +22,16 @@ class getRandomListAction extends CmsAction{
 						'select' => 'id,nickname',
 						'with' => array(
 							'trends' => array(
+								'select' => 'content',
 								'limit' => 1,
 					 			'offset' => 0,
 								'order' => 'publish_time DESC'
 							),
 						),
 					),
-				)
+				),
 		);
-		$users = $userManager->getUserRandom($listSize,$with);
+		$users = $userManager->getUserRandom($listSize,$with,$loginedId);
 		
 		$data = array();
 		$attributeNames = array('id','nickname','icon');
@@ -41,7 +42,7 @@ class getRandomListAction extends CmsAction{
 			if ( !empty($trends) ){
 				$attributes['trend'] = $trends[0]->getAttribute('content');
 			}else {
-				$attributes['trend'] = array();
+				$attributes['trend'] = '';
 			}
 			
 			$data[] = $attributes;
