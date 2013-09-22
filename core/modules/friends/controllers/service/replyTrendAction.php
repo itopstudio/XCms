@@ -8,15 +8,16 @@
  */
 class replyTrendAction extends CmsAction{
 	public function run($resourceId){
+		if ( $resourceId !== $this->app->getUser()->getId() ){
+			$this->response(402);
+		}
+		
 		$trendId = $this->getPost('trendId');
 		$trend = UserTrends::model()->findByPk($trendId);
 		if ( $trend === null ){
 			$this->response(202);
 		}
 		
-		if ( $trend->user_id !== $this->app->getUser()->getId() ){
-			$this->response(402);
-		}
 		$content = $this->getPost('content');
 		
 		$manager = $this->app->getComponent('trendsManager');
