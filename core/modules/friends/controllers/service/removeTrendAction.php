@@ -8,7 +8,7 @@
  */
 class removeTrendAction extends CmsAction{
 	public function run($resourceId){
-		$trendId = $this->getDelete('trendId');
+		$trendId = $this->getPost('trendId');
 		$trend = UserTrends::model()->with('pics')->findByPk($trendId);
 		if ( $trend === null ){
 			$this->response(202);

@@ -18,6 +18,10 @@ class TestConfig extends ConfigBase{
 						'user' => array(
 								'class' => 'application.modules.user.UserModule'
 						),
+						'friends' => array(
+								'class' => 'cms.modules.friends.FriendsModule',
+								'userManagerId' => 'UserManager'
+						),
 				),
 				'components' => array(
 						'log'=>array(
@@ -29,6 +33,16 @@ class TestConfig extends ConfigBase{
 										),
 								),
 						),
+						
+						'chatManager' => array(
+								'messagePusherId' => 'JPush'
+						),
+						
+						'pusher' => array(
+								'appKey' => '754d6e41a35fb03f778d53ae',
+								'masterSecret' => 'cc2e44d8d49b0cc5f02126ab'
+						),
+						
 						'db' => array(
 								'class' => 'system.db.CDbConnection',
 								'autoConnect' => false,

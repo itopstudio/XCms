@@ -11,20 +11,21 @@ class FriendsModule extends CmsModule{
 	 * 
 	 * @var string
 	 */
-	public $userManagerId = null;
+	public $userManagerId = 'UserManager';
 	
 	protected function init(){
 		parent::init();
 		Yii::import('friends.components.*');
 		Yii::import('friends.models.*');
 		Yii::app()->getUser()->setStateKeyPrefix(Yii::app()->params['frontUserStateKeyPrefix']);
+		
 		Yii::app()->setComponents(array(
 				'trendsManager' => array(
 						'class' => 'friends.components.TrendsManager'
 				),
 				'chatManager' => array(
-						'class' => 'friends.components.ChatManager'
-				)
+						'class' => 'friends.components.ChatManager',
+				),
 		));
 	}
 	

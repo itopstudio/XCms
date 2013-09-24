@@ -33,8 +33,6 @@ class UserMessage extends CmsActiveRecord
 		// will receive user inputs.
 		return array(
 			array('sender, receiver, content, send_time, status', 'required'),
-			array('status', 'numerical', 'integerOnly'=>true),
-			array('sender, receiver, send_time', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, sender, receiver, content, send_time, status', 'safe', 'on'=>'search'),
@@ -49,7 +47,7 @@ class UserMessage extends CmsActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'userMessagePics' => array(self::HAS_MANY, 'UserMessagePic', 'msg_id'),
+			'pics' => array(self::HAS_MANY, 'UserMessagePic', 'msg_id'),
 		);
 	}
 

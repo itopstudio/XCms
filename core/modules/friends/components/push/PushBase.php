@@ -5,5 +5,11 @@
  * Encoding GBK 
  */
 abstract class PushBase extends CApplicationComponent{
+	public function init(){
+		$this->attachBehavior('curl','CurlBehavior');
+	}
 	
+	private function generateVerification(){
+		throw Yii::t('friends','child class must impliment PushBase::generateVerification()');
+	}
 }

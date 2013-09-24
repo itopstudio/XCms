@@ -7,25 +7,36 @@
 class ChatManager extends CApplicationComponent{
 	/**
 	 * pusher component id
+	 * 
 	 * @var string
 	 */
 	public $messagePusherId = 'JPush';
 	
 	public function init(){
-		Yii::import('chat.components.*');
-		Yii::import('chat.components.push.*');
-		Yii::import('chat.models.*');
-		Yii::app()->setComponents(array(
-				'pusher' => array(
-						'class' => 'chat.components.push.'.$this->messagePusherId
-				)
+		Yii::import('friends.components.push.*');
+		Yii::app()->setComponent('pusher',array(
+				'class' => 'friends.components.push.'.$this->messagePusherId
 		));
 	}
 	
 	/**
+	 * 
 	 * @return PushBase
 	 */
 	public function getPusher(){
 		return Yii::app()->getComponent('pusher');
 	}
+	
+	public function resolveBindName($type,$info){
+		if ( $type === 1 ){
+			$bind = 'user'.$info;
+		}elseif ( $type === 2 ){
+			$bind = 'room'.$info;
+		}elseif ( $type === 3 ){
+			$bind = 'group'.$info;
+		}else {
+			$bind = '';
+		}
+	}
+	
 }

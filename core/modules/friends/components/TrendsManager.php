@@ -195,7 +195,13 @@ class TrendsManager extends CApplicationComponent{
 																				'with' => array(
 																						'pics',
 																						'replies' => array(
-																								'order' => 'time DESC'
+																								'order' => 'time DESC',
+																								'with' => array(
+																										'user' => array(
+																												'alias' => 'reply_user' ,
+																												'select' => 'reply_user.nickname',
+																										)
+																								)
 																						),
 																				),
 																				'order' => 'publish_time DESC'
@@ -244,7 +250,9 @@ class TrendsManager extends CApplicationComponent{
 				$data[$count]['trends'][$tCount]['replies'] = array();
 				$replies = $trend->getRelated('replies');
 				foreach ( $replies as $reply ){
-					$data[$count]['trends'][$tCount]['replies'][] = $reply->getAttributes();
+					$replyData = $reply->getAttributes();
+					$replyData['nickname'] = $reply->getRelated('user')->getAttribute('nickname');
+					$data[$count]['trends'][$tCount]['replies'][] = $replyData;
 				}
 			}
 		}

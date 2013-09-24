@@ -23,6 +23,7 @@ class ServiceController extends CmsController{
 				'createSupport' => array('class'=>'supportTrend'),
 				'getSayHelloToMe',
 				'getRandomFriends' => array('class'=>'getRandomList'),
+				'chat',
 		);
 	}
 }

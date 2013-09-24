@@ -31,13 +31,13 @@ class AuthManager extends CApplicationComponent{
 		Yii::import('cms.modules.accessControl.models.*');
 		Yii::app()->setComponents(array(
 				'rightCalculator' => array(
-						'class'=>'accessControl.components.calculators.RightCalculatorAR'
+						'class'=>'cms.modules.accessControl.components.calculators.RightCalculatorAR'
 				),
 				'assigner' => array(
-						'class'=>'accessControl.components.AuthAssigner'
+						'class'=>'cms.modules.accessControl.components.AuthAssigner'
 				),
 				'menu' => array(
-						'class'=>'accessControl.components.AuthMenu'
+						'class'=>'cms.modules.accessControl.components.AuthMenu'
 				),
 		));
 	}

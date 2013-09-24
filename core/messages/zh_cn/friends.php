@@ -19,5 +19,6 @@ return array(
 		'you can only remove your friends' => '只能删除自己的好友',
 		'can not get random list' => '无法获取列表',
 		'can not be empty' => '不能为空',
-		
+		'you can only chat with your friends' => '只能与自己的朋友聊天',
+		'chat peer and chat type can not be empty' => '聊天对象和类型不能为空'
 );
