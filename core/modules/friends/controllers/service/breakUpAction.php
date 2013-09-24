@@ -11,7 +11,7 @@ class breakUpAction extends CmsAction{
 		$loginedUid = $this->app->getUser()->getId();
 		
 		if ( $resourceId === $loginedUid ){
-			$with = $this->getDelete('with');
+			$with = $this->getRestParam('with');
 			if ( $with === $loginedUid ){
 				$this->response(202,Yii::t('friends','can not remove friend'));
 			}

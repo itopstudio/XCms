@@ -14,18 +14,14 @@ class chatAction extends CmsAction{
 			$this->response(402,Yii::t('friends','you can only chat with your friends'));
 		}
 		
-		$pusher = Yii::app()->getComponent('chatManager')->getPusher();
+		$chatManager = Yii::app()->getComponent('chatManager');
+		$pusher = $chatManager->getPusher();
 		$with = $this->getPost('with',null);
 		$type = $this->getPost('type',null);
 		if ( $with !== null && $type !== null ){
-			if ( $type === 1 ){
-				$alias = 'user'.$with;
-			}elseif ( $type === 2 ){
-				
-			}elseif ( $type === 3 ){
-				
-			}else {
-				
+			$bind = $chatManager->resolveBindName($type,$with);
+			if ( $bind === false ){
+				$this->response(202,Yii::t('friends','can not resolve bind name'));
 			}
 			$return = $pusher->pushMessageWithTags(2,'room1','api push2','title');
 			var_dump($return);

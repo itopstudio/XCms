@@ -27,6 +27,12 @@ class ChatManager extends CApplicationComponent{
 		return Yii::app()->getComponent('pusher');
 	}
 	
+	/**
+	 * 
+	 * @param int $type
+	 * @param int $info
+	 * @return string
+	 */
 	public function resolveBindName($type,$info){
 		if ( $type === 1 ){
 			$bind = 'user'.$info;
@@ -35,8 +41,9 @@ class ChatManager extends CApplicationComponent{
 		}elseif ( $type === 3 ){
 			$bind = 'group'.$info;
 		}else {
-			$bind = '';
+			$bind = false;
 		}
+		return $bind;
 	}
 	
 }
