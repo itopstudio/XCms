@@ -33,9 +33,6 @@ class UserMessage extends CmsActiveRecord
 		// will receive user inputs.
 		return array(
 			array('sender, receiver, content, send_time, status', 'required'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, sender, receiver, content, send_time, status', 'safe', 'on'=>'search'),
 		);
 	}
 

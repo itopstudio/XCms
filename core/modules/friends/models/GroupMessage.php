@@ -1,30 +1,30 @@
 <?php
 
 /**
- * This is the model class for table "{{chat_message}}".
+ * This is the model class for table "{{group_message}}".
  *
- * The followings are the available columns in table '{{chat_message}}':
+ * The followings are the available columns in table '{{group_message}}':
  * @property string $id
  * @property string $sender
- * @property string $receive_room
+ * @property string $receive_group
  * @property string $content
  * @property string $send_time
  * @property integer $status
  *
  * The followings are the available model relations:
  * @property User $sender0
- * @property ChatRoom $receiveRoom
- * @property ChatPic[] $chatPics
+ * @property Groups $receiveGroup
+ * @property GroupMsgPic[] $groupMsgPics
  * @property User[] $xcmsUsers
  */
-class RoomMessage extends CmsActiveRecord
+class GroupMessage extends CmsActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{chat_message}}';
+		return '{{group_message}}';
 	}
 
 	/**
@@ -35,7 +35,7 @@ class RoomMessage extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('sender, receive_room, content, send_time, status', 'required'),
+			array('sender, receive_group, content, send_time, status', 'required'),
 		);
 	}
 
@@ -48,9 +48,9 @@ class RoomMessage extends CmsActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'sender0' => array(self::BELONGS_TO, 'User', 'sender'),
-			'receiveRoom' => array(self::BELONGS_TO, 'ChatRoom', 'receive_room'),
-			'chatPics' => array(self::HAS_MANY, 'ChatPic', 'msg_id'),
-			'xcmsUsers' => array(self::MANY_MANY, 'User', '{{offline_chat_message}}(msg_id, user_id)'),
+			'receiveGroup' => array(self::BELONGS_TO, 'Groups', 'receive_group'),
+			'groupMsgPics' => array(self::HAS_MANY, 'GroupMsgPic', 'msg_id'),
+			'xcmsUsers' => array(self::MANY_MANY, 'User', '{{offline_group_message}}(msg_id, user_id)'),
 		);
 	}
 
@@ -62,7 +62,7 @@ class RoomMessage extends CmsActiveRecord
 		return array(
 			'id' => 'ID',
 			'sender' => 'Sender',
-			'receive_room' => 'Receive Room',
+			'receive_group' => 'Receive Group',
 			'content' => 'Content',
 			'send_time' => 'Send Time',
 			'status' => 'Status',
@@ -89,7 +89,7 @@ class RoomMessage extends CmsActiveRecord
 
 		$criteria->compare('id',$this->id,true);
 		$criteria->compare('sender',$this->sender,true);
-		$criteria->compare('receive_room',$this->receive_room,true);
+		$criteria->compare('receive_group',$this->receive_group,true);
 		$criteria->compare('content',$this->content,true);
 		$criteria->compare('send_time',$this->send_time,true);
 		$criteria->compare('status',$this->status);
@@ -103,7 +103,7 @@ class RoomMessage extends CmsActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return RoomMessage the static model class
+	 * @return GroupMessage the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

@@ -27,23 +27,43 @@ class ChatManager extends CApplicationComponent{
 		return Yii::app()->getComponent('pusher');
 	}
 	
+	public function pushMessage($type,$to,$sendno,$content,$title='',$extras=array()){
+		$pusher = $this->getPusher();
+		if ( $type === 1 ){
+			$return = $pusher->pushMessageWithAlias($sendno,$to,$content,$title,'',$extras);
+		}else {
+			$return = $pusher->pushMessageWithTags($sendno,$to,$content,$title,'',$extras);
+		}
+		return $return;
+	}
+	
 	/**
 	 * 
 	 * @param int $type
 	 * @param int $info
 	 * @return string
 	 */
-	public function resolveBindName($type,$info){
+	public function resolveBindInfo($type,$to,&$attributes=array()){
+		$type = intval($type);
 		if ( $type === 1 ){
-			$bind = 'user'.$info;
+			$bind = 'user'.$to;
+			$model = new UserMessage();
+			$attributes['receiver'] = $to;
 		}elseif ( $type === 2 ){
-			$bind = 'room'.$info;
+			$bind = 'room'.$to;
+			$model = new RoomMessage();
+			$attributes['receive_room'] = $to;
 		}elseif ( $type === 3 ){
-			$bind = 'group'.$info;
+			$bind = 'group'.$to;
+			$model = new GroupMessage();
+			$attributes['receive_group'] = $to;
 		}else {
-			$bind = false;
+			return false;
 		}
-		return $bind;
+		return array(
+				'bindName' => $bind,
+				'model' => $model,
+		);
 	}
 	
 }

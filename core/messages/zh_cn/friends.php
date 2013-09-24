@@ -21,5 +21,6 @@ return array(
 		'can not be empty' => '不能为空',
 		'you can only chat with your friends' => '只能与自己的朋友聊天',
 		'chat peer and chat type can not be empty' => '聊天对象和类型不能为空',
-		'can not resolve bind name' => '无法获取绑定信息'
+		'can not resolve bind name' => '无法获取绑定信息',
+		'can not chat with yourself' => '请不要和自己聊天'
 );
