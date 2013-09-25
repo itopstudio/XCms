@@ -85,19 +85,19 @@ abstract class BaseUserManager extends CApplicationComponent{
 	
 		$list = UserInterest::model()->findAll($criteria);
 		$return = array();
-		foreach ( $list as $l ){
+		foreach ( $list as $key => $l ){
 			$follower = $l->getRelated('follower');
 			$trends = $follower->getRelated('trends');
-			$return = array(
+			$return[$key] = array(
 					'id' => $follower->getAttribute('id'),
 					'nickname' => $follower->getAttribute('nickname'),
 					'helloId' => $l->getPrimaryKey(),
 					'icon' => $follower->getRelated('frontUser')->getAttribute('icon'),
 			);
 			if ( !empty($trends) ){
-				$return['trend'] = $trends[0]->getAttribute('content');
+				$return[$key]['trend'] = $trends[0]->getAttribute('content');
 			}else {
-				$return['trend'] = '';
+				$return[$key]['trend'] = '';
 			}
 		}
 		return $return;
@@ -117,6 +117,9 @@ abstract class BaseUserManager extends CApplicationComponent{
 			$interest->addError('follower',Yii::t('friends','you have already been friends'));
 		}elseif ( $this->hasSaidHello($from, $to) ){
 			$interest->addError('follower',Yii::t('friends','you have already said hello'));
+		}elseif ( ($sayHelloed = $this->hasSaidHello($to,$from)) !== false ) {
+			$this->makeFriends($from,$sayHelloed->id);
+			return true;
 		}else {
 			$attributes = array(
 					'follower' => $from,
@@ -209,6 +212,7 @@ abstract class BaseUserManager extends CApplicationComponent{
 			);
 		}
 		$hasSaidHelloToo->save();
+		return true;
 	}
 	
 	/**
