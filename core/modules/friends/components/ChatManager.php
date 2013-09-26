@@ -30,6 +30,7 @@ class ChatManager extends CApplicationComponent{
 	
 	public function pushMessage($type,$to,$sendno,$content,$title='',$extras=array()){
 		$pusher = $this->getPusher();
+		$type = intval($type);
 		if ( $type === 1 ){
 			$return = $pusher->pushMessageWithAlias($sendno,$to,$content,$title,'',$extras);
 		}else {
