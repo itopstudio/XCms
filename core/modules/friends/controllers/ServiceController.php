@@ -9,6 +9,15 @@
 class ServiceController extends CmsController{
 	public $actionClassPathAlias = 'friends.controllers';
 	
+	public function loginRequired(){
+		$this->response(400,'请登录');
+	}
+	
+	public function filters(){
+		$filters = parent::filters();
+		return array($filters['hasLogined']);
+	}
+	
 	public function getActionClass(){
 		return array(
 				'createHello' => array('class'=>'sayHello'),

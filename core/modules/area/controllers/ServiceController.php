@@ -7,5 +7,17 @@
  * Encoding UTF-8
  */
 class ServiceController extends CmsController{
+	public $actionClassPathAlias = 'area.controllers';
 	
+	public function filters(){
+		return array();
+	}
+	
+	public function getActionClass(){
+		return array(
+				'getLevel',
+				'getDirectChildren',
+				'getAllChildren',
+		);
+	}
 }
