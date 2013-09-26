@@ -27,6 +27,7 @@ class ChatManager extends CApplicationComponent{
 		return Yii::app()->getComponent('pusher');
 	}
 	
+	
 	public function pushMessage($type,$to,$sendno,$content,$title='',$extras=array()){
 		$pusher = $this->getPusher();
 		if ( $type === 1 ){
@@ -65,5 +66,7 @@ class ChatManager extends CApplicationComponent{
 				'model' => $model,
 		);
 	}
+	
+	
 	
 }

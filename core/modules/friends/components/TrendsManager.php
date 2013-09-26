@@ -129,145 +129,172 @@ class TrendsManager extends CApplicationComponent{
 	 * @param int $uid
 	 * @return array
 	 */
-	public function findUserTrends($uid){
+	public function findUserTrends($uid,$pageSize){
 		$criteria = new CDbCriteria();
+		$trendModel = UserTrends::model();
 		$criteria->alias = 'trends';
 		$criteria->condition = 'trends.user_id='.$uid;
 		
-		$myTrends = UserTrends::model()->with(array(
+		$count = $trendModel->count($criteria);
+		$pager = new CPagination($count);
+		$pager->pageSize = $pageSize;
+		$pager->applyLimit($criteria);
+		
+		$criteria->with = array(
 				'pics',
 				'replies' => array(
-						'select' => 'id,content',
-						'with' => array(
-								'user' => array(
-										'select' => 'nickname',
-								)
+					'select' => 'id,content',
+					'with' => array(
+						'user' => array(
+								'select' => 'nickname',
 						)
+					)
 				)
-		))->findAll($criteria);
-		$trends = array();
-		foreach ( $myTrends as $key => $myTrend ){
-			$trends[$key]['data'] = $myTrend->getAttributes();
-			$trends[$key]['replies'] = array();
+		);
+		$criteria->order = 'publish_time DESC';
+		
+		$trends = $trendModel->findAll($criteria);
+		$return = array();
+		foreach ( $trends as $key => $trend ){
+			$return[$key]['data'] = $trend->getAttributes();
+			$return[$key]['replies'] = array();
 			
-			$pics = $myTrend->getRelated('pics');
-			$picUrl = $this->resolvePicUrl($myTrend->getAttribute('publish_time'));
+			$pics = $trend->getRelated('pics');
+			$picUrl = $this->resolvePicUrl($trend->getAttribute('publish_time'));
 			foreach ( $pics as $pic ){
-				$trends[$key]['data']['pics'][] = $picUrl.$pic->getAttribute('url');
+				$return[$key]['data']['pics'][] = $picUrl.$pic->getAttribute('url');
 			}
 			
-			$replies = $myTrend->getRelated('replies');
+			$replies = $trend->getRelated('replies');
 			foreach ( $replies as $i => $reply ){
-				$trends[$key]['replies'][$i]['content'] = $reply->getAttribute('content');
-				$trends[$key]['replies'][$i]['user'] = $reply->getRelated('user')->getAttribute('nickname');
+				$return[$key]['replies'][$i]['content'] = $reply->getAttribute('content');
+				$return[$key]['replies'][$i]['user'] = $reply->getRelated('user')->getAttribute('nickname');
 			}
 		}
 		
-		return $trends;
+		return $return;
 	}
 	
 	/**
 	 * 
-	 * @param BaseUserManager $userManager
 	 * @param int $uid
+	 * $param int $pageSize
 	 * @return array
 	 */
-	public function findFriendsTrends($userManager,$uid){
-		$criteria = array(
-				'select' => 'id' ,
-				'with' => array(
-						'baseUser' => array(
-								'select' => 'id,nickname',
-								'with' => array(
-										'friends' => array(
-												'select' => 'remark',
-												'with' => array(
-														'followed' => array(
-																'alias' => 'friend',
-																'select' => 'friend.id,friend.nickname',
-																'with' => array(
-																		'frontUser' => array(
-																				'alias' => 'frontUser',
-																				'select' => 'frontUser.icon'
-																		),
-																		'trends' => array(
-																				'alias' => 'trends',
-																				'with' => array(
-																						'pics',
-																						'replies' => array(
-																								'order' => 'time DESC',
-																								'with' => array(
-																										'user' => array(
-																												'alias' => 'reply_user' ,
-																												'select' => 'reply_user.nickname',
-																										)
-																								)
-																						),
-																				),
-																				'order' => 'publish_time DESC'
-																		),
-																),
-														),
-												),
-										),
-								),
-						),
-				),
+	public function findFriendsTrends($uid,$pageSize){
+		$criteria = new CDbCriteria();
+		$criteria->select = 'id';
+		$criteria->with = array(
+				'friends' => array(
+					'select' => 'remark',
+					'with' => array(
+						'followed' => array(
+							'alias' => 'followed',
+							'select' => 'followed.id,followed.nickname',
+							'with' => array(
+								'frontUser' => array(
+										'alias' => 'front',
+										'select' => 'front.icon'
+								)
+							)
+						)
+					)
+				)
 		);
-		
-		$user = $userManager->findByPk($uid,$criteria);
+		$user = UserModel::model()->findByPk($uid,$criteria);
 		if ( $user === null ){
 			return array();
 		}
-		
-		$data = array();
-		$friends = $user->getRelated('baseUser')->getRelated('friends');
-		foreach ( $friends as $count => $friend ){
-			$f = $friend->getRelated('followed');
-			$data[$count]['userInfo'] = array(
-					'id' => $f->getAttribute('id'),
-					'nickname' => $f->getAttribute('nickname'),
-					'icon' => $f->getRelated('frontUser')->getAttribute('icon'),
+		$friends = $user->getRelated('friends');
+		if ( empty($friends) ){
+			return array();
+		}
+		$friendMap = array();
+		$friendIds = array();
+		foreach ( $friends as $friend ){
+			$followed = $friend->getRelated('followed');
+			$friendId = $followed->getAttribute('id');
+			$friendIds[] = $friendId;
+			$friendMap['f'.$friendId] = array(
+					'id' => $friendId,
+					'nickname' => $followed->getAttribute('nickname'),
 					'remark' => $friend->getAttribute('remark')
 			);
+		}
+		
+		$trendsModel = UserTrends::model();
+		$criteria = null;
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition('user_id',$friendIds);
+		
+		$count = $trendsModel->count($criteria);
+		$pager = new CPagination($count);
+		$pager->pageSize = $pageSize;
+		$pager->applyLimit($criteria);
+		
+		$criteria->alias = 'trends';
+		$criteria->with = array(
+				'pics' => array(
+					'select' => 'url'
+				),
+				'replies' => array(
+					'order' => 'time DESC',
+					'with' => array(
+						'user' => array(
+							'alias' => 'reply_user' ,
+							'select' => 'reply_user.nickname',
+						)
+					)
+				),
+		);
+		$criteria->order = 'publish_time DESC';
+		
+		$trends = $trendsModel->findAll($criteria);
+		$data = array();
+		foreach ( $trends as $trend ){
+			$pics = $trend->getRelated('pics');
+			$picData = array();
+			$picUrl = $this->resolvePicUrl($trend->getAttribute('publish_time'));
+			foreach ( $pics as $pic ){
+				$picData[] = $picUrl.$pic->getAttribute('url');
+			}
 			
-			$trends = $f->getRelated('trends');
-			$data[$count]['trends'] = array();
-			foreach ( $trends as $tCount => $trend ){
-				$data[$count]['trends'][$tCount] = array(
-						'id' => $trend->getPrimaryKey(),
+			$replies = $trend->getRelated('replies');
+			$replyData = array();
+			foreach ( $replies as $reply ){
+				$user = $reply->getRelated('user');
+				$replyData[] = array(
+						'nickname' => $user->getAttribute('nickname'),
+						'content' => $reply->getAttribute('content'),
+						'time' => $reply->getAttribute('time'),
+				);
+			}
+			
+			$publisher = $trend->getAttribute('user_id');
+			$data[] = array(
+					'trend' => array(
 						'content' => $trend->getAttribute('content'),
 						'publish_time' => $trend->getAttribute('publish_time')
-				);
-				
-				$data[$count]['trends'][$tCount]['pics'] = array();
-				$pics = $trend->getRelated('pics');
-				$picUrl = $this->resolvePicUrl($trend->getAttribute('publish_time'));
-				foreach ( $pics as $pic ){
-					$data[$count]['trends'][$tCount]['pics'][] = $picUrl.$pic->getAttribute('url');
-				}
-				
-				$data[$count]['trends'][$tCount]['replies'] = array();
-				$replies = $trend->getRelated('replies');
-				foreach ( $replies as $reply ){
-					$replyData = $reply->getAttributes();
-					$replyData['nickname'] = $reply->getRelated('user')->getAttribute('nickname');
-					$data[$count]['trends'][$tCount]['replies'][] = $replyData;
-				}
-			}
+					),
+					'userInfo' => $friendMap['f'.$publisher],
+					'replies' => $replyData,
+					'pics' => $picData
+			);
 		}
+		
 		return $data;
 	}
 	
 	/**
 	 * 
+	 * @param int $uid
 	 * @param UserTrends $trend
 	 * @param string $content
 	 * @return boolean return array if error
 	 */
-	public function reply($trend,$content){
+	public function reply($uid,$trend,$content){
 		$data = array(
-				'user_id' => $trend->getAttribute('user_id'),
+				'user_id' => $uid,
 				'trends_id' => $trend->getAttribute('id'),
 				'content' => $content,
 				'time' => time()

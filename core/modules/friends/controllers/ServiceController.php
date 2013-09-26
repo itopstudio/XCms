@@ -24,6 +24,7 @@ class ServiceController extends CmsController{
 				'getSayHelloToMe',
 				'getRandomFriends' => array('class'=>'getRandomList'),
 				'chat',
+				'getOfflineMessage'
 		);
 	}
 }

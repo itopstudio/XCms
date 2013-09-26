@@ -13,12 +13,11 @@ class getTrendsAction extends CmsAction{
 			$this->response(402);
 		}
 		
-		$module = $this->getController()->getModule();
 		$manager = $this->app->getComponent('trendsManager');
-		$userManager = $this->app->getComponent($module->userManagerId);
 		$target = $this->getQuery('target',null);
+		$pageSize = $this->getQuery('pageSize',40);
 		
-		$data = $manager->findUserTrends($loginedId);
+		$data = $manager->findUserTrends($loginedId,$pageSize);
 		$this->response(300,'',$data);
 	}
 }

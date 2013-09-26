@@ -27,12 +27,12 @@ class CurlBehavior extends CBehavior{
 	 * 
 	 * @var string
 	 */
-	private $_requestBody='';
+	private $_requestBody = '';
 	/**
 	 * 
 	 * @var string
 	 */
-	private $_urlParams='';
+	private $_urlParams = '';
 	/**
 	 * curl request response
 	 * 
@@ -136,9 +136,7 @@ class CurlBehavior extends CBehavior{
 	 *
 	 */
 	public function curlBuildOpts(){
-		foreach ( $this->_curlOptions as $key => $opts ){
-			curl_setopt($this->_ch,$key,$opts);
-		}
+		curl_setopt_array($this->_ch,$this->_curlOptions);
 	}
 	
 	/**
@@ -272,8 +270,8 @@ class CurlBehavior extends CBehavior{
 	 * 
 	 * @return resource
 	 */
-	public function getCurlHandler(){
-		if ( $this->_ch === null ){
+	public function getCurlHandler($refresh=false){
+		if ( $refresh === true || $this->_ch === null ){
 			$this->curlInit();
 		}
 		return $this->_ch;

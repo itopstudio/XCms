@@ -28,7 +28,7 @@ class chatAction extends CmsAction{
 					'sender' => $loginedUid,
 					'content' => $content,
 					'send_time' => time(),
-					'status' => 2
+					'status' => 0
 			);
 			$bindInfo = $chatManager->resolveBindInfo($type,$with,$attributes);
 			if ( $bindInfo === false ){
@@ -41,16 +41,15 @@ class chatAction extends CmsAction{
 			if ( $model->save() ){
 				$sendno = $model->getPrimaryKey();
 				$content = $attributes['content'];
-				$extras = array($type,$loginedUid);
+				$extras = array($type,$loginedUid,$model->send_time);
 				
 				$result = $chatManager->pushMessage($type,$sendTo,$sendno,$content,'社区宝新消息',$extras);
 				
 				if ( $result->hasError === false ){
-					$model->setAttribute('status',0);
-					$model->save();
 					$this->response(200);
 				}else {
-					$this->response(201,$result->error);
+					$model->delete();
+					$this->response($result->errorCode,$result->errorMsg);
 				}
 			}else {
 				$this->response(201,'',$model->getErrors());

@@ -13,11 +13,10 @@ class getFriendsTrendsAction extends CmsAction{
 			$this->response(402);
 		}
 
-		$module = $this->getController()->getModule();
 		$manager = $this->app->getComponent('trendsManager');
-		$userManager = $this->app->getComponent($module->userManagerId);
+		$pageSize = $this->getQuery('pageSize',40);
 
-		$data = $manager->findFriendsTrends($userManager,$loginedId);
+		$data = $manager->findFriendsTrends($loginedId,$pageSize);
 		$this->response(300,'',$data);
 	}
 }

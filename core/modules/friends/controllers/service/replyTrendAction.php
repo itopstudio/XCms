@@ -21,7 +21,7 @@ class replyTrendAction extends CmsAction{
 		$content = $this->getPost('content');
 		
 		$manager = $this->app->getComponent('trendsManager');
-		$result = $manager->reply($trend,$content);
+		$result = $manager->reply($resourceId,$trend,$content);
 		if ( $result === true ){
 			$this->response(200);
 		}else {

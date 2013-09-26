@@ -9,14 +9,7 @@
  * @property string $level
  * @property string $lft
  * @property string $rgt
- * @property integer $city_tier
- * @property string $country
- * @property string $cn_name
- * @property string $cn_district
- * @property string $big5_name
- * @property string $big5_district
- * @property string $en_name
- * @property string $en_district
+ * @property string $area_name
  *
  * The followings are the available model relations:
  * @property UserAddress[] $userAddresses
@@ -40,12 +33,8 @@ class Area extends LevelModel
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('city_tier', 'numerical', 'integerOnly'=>true),
+			array('area_name', 'required',),
 			array('fid, level, lft, rgt','safe'),
-			array('country', 'length', 'max'=>40),
-			array('cn_name, big5_name, en_name', 'length', 'max'=>20),
-			array('cn_district, big5_district, en_district', 'length', 'max'=>50),
-			array('id, fid, level, lft, rgt, city_tier, country, cn_name, cn_district, big5_name, big5_district, en_name, en_district', 'safe', 'on'=>'search'),
 		);
 	}
 
