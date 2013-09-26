@@ -243,6 +243,11 @@ class TrendsManager extends CApplicationComponent{
 						'user' => array(
 							'alias' => 'reply_user' ,
 							'select' => 'reply_user.nickname',
+							'with' => array(
+								'frontUser' => array(
+									'select' => 'icon'
+								)
+							)
 						)
 					)
 				),
@@ -264,6 +269,7 @@ class TrendsManager extends CApplicationComponent{
 			foreach ( $replies as $reply ){
 				$user = $reply->getRelated('user');
 				$replyData[] = array(
+						'icon' => $user->getRelated('frontUser')->getAttribute('icon'),
 						'nickname' => $user->getAttribute('nickname'),
 						'content' => $reply->getAttribute('content'),
 						'time' => $reply->getAttribute('time'),
@@ -273,6 +279,7 @@ class TrendsManager extends CApplicationComponent{
 			$publisher = $trend->getAttribute('user_id');
 			$data[] = array(
 					'trend' => array(
+						'id' => $trend->getAttribute('id'),
 						'content' => $trend->getAttribute('content'),
 						'publish_time' => $trend->getAttribute('publish_time')
 					),

@@ -16,7 +16,6 @@ class ServiceController extends CmsController{
 				'removeFriend' => array('class'=>'breakUp'),
 				'createTrend' => array('class'=>'publishTrend'),
 				'removeTrend',
-				'getMyTrends',
 				'getFriendsTrends',
 				'getTrends',
 				'createReply' => array('class'=>'replyTrend'),
