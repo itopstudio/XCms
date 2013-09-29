@@ -36,14 +36,8 @@ class Groups extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, master_id, group_name, admin_num, creation_time', 'required'),
-			array('admin_num, user_num, creation_time', 'numerical', 'integerOnly'=>true),
-			array('id, master_id', 'length', 'max'=>11),
-			array('group_name', 'length', 'max'=>15),
-			array('description, announcement', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, master_id, group_name, description, announcement, admin_num, user_num, creation_time', 'safe', 'on'=>'search'),
+			array('master_id, group_name, creation_time', 'required'),
+			array('description,announcement,admin_num', 'safe'),
 		);
 	}
 

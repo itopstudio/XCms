@@ -104,21 +104,19 @@ class CurlBehavior extends CBehavior{
 		$this->setEnableSsl($enableSsl);
 		$this->setReturn($return);
 		
-		if ( $this->_ch === null ){
-			$this->curlInit();
-		}
+		$handler = $this->getCurlHandler();
 		$this->curlBuildOpts();
-		$result = curl_exec($this->_ch);
+		$result = curl_exec($handler);
 		
 		if ( $result === false ){
 			$this->setError();
 		}else {
-			$this->_response = curl_getinfo($this->_ch);
+			$this->_response = curl_getinfo($handler);
 			if ( $return !== false ){
 				$this->_output = $result;
 			}
 		}
-		curl_close($this->_ch);
+		curl_close($handler);
 	}
 	
 	/**
@@ -136,7 +134,11 @@ class CurlBehavior extends CBehavior{
 	 *
 	 */
 	public function curlBuildOpts(){
-		curl_setopt_array($this->_ch,$this->_curlOptions);
+		if ( $this->getCanBuildOpts() === false ){
+			return false;
+		}
+		$ch = $this->getCurlHandler();
+		curl_setopt_array($ch,$this->_curlOptions);
 	}
 	
 	/**
@@ -294,5 +296,13 @@ class CurlBehavior extends CBehavior{
 	 */
 	public function getHasError(){
 		return $this->_errno !== 0;
+	}
+	
+	/**
+	 *
+	 * @return boolean
+	 */
+	public function getCanBuildOpts(){
+		return $this->_url !== '';
 	}
 }

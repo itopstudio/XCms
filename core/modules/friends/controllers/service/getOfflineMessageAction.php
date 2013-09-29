@@ -14,7 +14,7 @@ class getOfflineMessageAction extends CmsAction{
 		}
 		
 		$timestamp = $this->getQuery('start');
-		
-		
+		$chatManager = Yii::app()->getComponent('chatManager');
+		$chatManager->pushOfflineMessage($loginedId,$timestamp);
 	}
 }

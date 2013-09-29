@@ -57,10 +57,10 @@ class JPush extends PushBase{
 	 */
 	private $_masterSecret = '';
 	/**
-	 * 离线消息保存时间，默认10天
+	 * 离线消息保存时间，默认不保存
 	 * @var int
 	 */
-	private $_timeToLive = 864000;
+	private $_timeToLive = 0;
 	
 	private $_sendno = 0;
 	private $_message = '';
@@ -215,6 +215,47 @@ class JPush extends PushBase{
 			$error = new JPushError($output);
 			return $error;
 		}
+	}
+	
+	public function pushMulti($data){
+		$handlers = array();
+		$curl = $this->curl;
+		$curlMulti = $this->curlMulti;
+		
+		foreach ( $data as $d ){
+			list($sendno,$msgContent,$msgTitle,$builderId,$contentType,
+				 $extras,$msgType,$receiver,$receiverType,$overrideMsgId) = $d;
+			
+			if ( $sendno !== null ){
+				$this->setSendno($sendno);
+			}
+			$this->setMessage($msgContent,$msgTitle,$builderId,$contentType,$extras,$msgType);
+			if ( $receiver !== '' ){
+				$this->setReceiver($receiver);
+			}
+			if ( $receiverType !== null ){
+				$this->setReceiverType($receiverType);
+			}
+			if ( $overrideMsgId !== null ){
+				$this->setOverrideMsgId($overrideMsgId);
+			}
+			
+			$this->generateVerification();
+			$this->buildMessage();
+			$this->buildUrl();
+			
+			$handlers[] = $curl->getHandler(true);
+			$curl->setUrl($this->_requestUrl);
+			$curl->setReturn(true);
+			$curl->setMethod('POST');
+			$curl->setRequestBody($ths->_requestData);
+			$curl->curlBuildOpts();
+			$ths->_requestData = null;
+			$ths->_requestData = array();
+		}
+		
+		$curlMulti->addHandlersToMultiHandler($handlers);
+		return $curlMulti->exec();
 	}
 	
 	/**

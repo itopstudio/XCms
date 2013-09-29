@@ -27,11 +27,8 @@ class UserOwnedGroup extends CmsActiveRecord
 		// will receive user inputs.
 		return array(
 			array('group_id, user_id', 'required'),
-			array('group_id, user_id', 'length', 'max'=>11),
 			array('remark', 'length', 'max'=>15),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('group_id, user_id, remark', 'safe', 'on'=>'search'),
+			array('status', 'safe')
 		);
 	}
 

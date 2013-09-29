@@ -217,6 +217,7 @@ class TrendsManager extends CApplicationComponent{
 			$friendIds[] = $friendId;
 			$friendMap['f'.$friendId] = array(
 					'id' => $friendId,
+					'icon' => $followed->getRelated('frontUser')->getAttribute('icon'),
 					'nickname' => $followed->getAttribute('nickname'),
 					'remark' => $friend->getAttribute('remark')
 			);
@@ -243,11 +244,6 @@ class TrendsManager extends CApplicationComponent{
 						'user' => array(
 							'alias' => 'reply_user' ,
 							'select' => 'reply_user.nickname',
-							'with' => array(
-								'frontUser' => array(
-									'select' => 'icon'
-								)
-							)
 						)
 					)
 				),
@@ -269,7 +265,6 @@ class TrendsManager extends CApplicationComponent{
 			foreach ( $replies as $reply ){
 				$user = $reply->getRelated('user');
 				$replyData[] = array(
-						'icon' => $user->getRelated('frontUser')->getAttribute('icon'),
 						'nickname' => $user->getAttribute('nickname'),
 						'content' => $reply->getAttribute('content'),
 						'time' => $reply->getAttribute('time'),

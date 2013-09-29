@@ -26,7 +26,17 @@ class FriendsModule extends CmsModule{
 				'chatManager' => array(
 						'class' => 'friends.components.ChatManager',
 				),
+				'groupManager' => array(
+						'class' => 'friends.components.GroupManager'
+				)
 		));
+	}
+	
+	/**
+	 * @return GroupManager
+	 */
+	public function getGroupManager(){
+		return Yii::app()->getComponent('groupManager');
 	}
 	
 	public function loadSelfModels(){

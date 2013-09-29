@@ -19,7 +19,6 @@ class chatAction extends CmsAction{
 		}
 		
 		$chatManager = Yii::app()->getComponent('chatManager');
-		$pusher = $chatManager->getPusher();
 		$type = $this->getPost('type',null);
 		$content = $this->getPost('content',null);
 		

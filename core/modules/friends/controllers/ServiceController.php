@@ -22,6 +22,9 @@ class ServiceController extends CmsController{
 		return array(
 				'createHello' => array('class'=>'sayHello'),
 				'createFriend' => array('class'=>'confirmHello'),
+				'createGroup' => array('class'=>'addGroup'),
+				'createGroupMember' => array('class'=>'joinGroup'),
+				'removeGroupMember' => array('class'=>'quitGroup'),
 				'removeFriend' => array('class'=>'breakUp'),
 				'createTrend' => array('class'=>'publishTrend'),
 				'removeTrend',

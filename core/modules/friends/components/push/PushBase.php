@@ -7,6 +7,7 @@
 abstract class PushBase extends CApplicationComponent{
 	public function init(){
 		$this->attachBehavior('curl','CurlBehavior');
+		$this->attachBehavior('curlMulti','CurlMultiBehavior');
 	}
 	
 	private function generateVerification(){

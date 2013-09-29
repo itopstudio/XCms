@@ -38,6 +38,10 @@ class ChatManager extends CApplicationComponent{
 		return $return;
 	}
 	
+	public function pushOfflineMessage($uid,$startFrom,$maxConnection=50){
+		
+	}
+	
 	/**
 	 * 
 	 * @param int $type
