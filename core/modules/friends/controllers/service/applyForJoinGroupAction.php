@@ -1,12 +1,12 @@
 <?php
 /**
- * @name joinGroupAction.php UTF-8
+ * @name applyForJoinGroupAction.php UTF-8
  * @author ChenJunAn<lancelot1215@gmail.com>
  * 
  * Date 2013-9-29
  * Encoding UTF-8
  */
-class joinGroupAction extends CmsAction{
+class applyForJoinGroupAction extends CmsAction{
 	public function run($resourceId){
 		$loginedId = $this->app->getUser()->getId();
 		if ( $loginedId !== $resourceId ){
@@ -19,7 +19,7 @@ class joinGroupAction extends CmsAction{
 		}
 		
 		$groupManager = $this->getController()->getModule()->getGroupManager();
-		$result = $groupManager->addMemberToGroup($groupId,$loginedId);
+		$result = $groupManager->addMemberToGroup($groupId,$loginedId,50);
 		
 		if ( !$result->hasErrors() ){
 			$this->response(200);

@@ -190,11 +190,13 @@ abstract class BaseUserManager extends CApplicationComponent{
 		$followed = $interest->getAttribute('followed');
 		
 		if ( $uid !== $followed ){
-			return Yii::t('friends','can not make friends with him or her');
+			$interest->addError('follower',Yii::t('friends','can not make friends with him or her'));
+			return $interest;
 		}
 
 		if ( $this->isFriend($follower,$followed) ){
-			return Yii::t('friends','you have already been friends');
+			$interest->addError('follower',Yii::t('friends','you have already been friends'));
+			return $interest;
 		}
 		
 		$interest->setAttribute('status',1);
@@ -212,7 +214,7 @@ abstract class BaseUserManager extends CApplicationComponent{
 			);
 		}
 		$hasSaidHelloToo->save();
-		return true;
+		return $interest;
 	}
 	
 	/**
@@ -224,19 +226,21 @@ abstract class BaseUserManager extends CApplicationComponent{
 	public function denyHello($uid,$sayHelloId){
 		$interest = UserInterest::model()->findByPk($sayHelloId);
 		if ( $interest === null ){
-			return Yii::t('friends','can not denied him');
+			$interest->addError('follower',Yii::t('friends','can not denied him'));
+			return $interest;
 		}
 		$follower = $interest->getAttribute('follower');
 		$followed = $interest->getAttribute('followed');
 		if ( $uid !== $followed ){
-			return Yii::t('friends','can not denied him');
+			$interest->addError('follower',Yii::t('friends','can not denied him'));
+			return $interest;
 		}
 		if ( $this->hasDenied($follower, $followed) === false ){
 			$interest->setAttribute('status',2);
 			$interest->save();
 			UserInterest::model()->deleteAll('follower=:followed AND followed=:follower',array(':follower'=>$follower,'followed'=>$followed));
 		}
-		return true;
+		return $interest;
 	}
 	
 	/**

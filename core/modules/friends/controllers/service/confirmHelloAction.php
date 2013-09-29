@@ -17,18 +17,25 @@ class confirmHelloAction extends CmsAction{
 		$type = $this->getPost('type',null);
 		$module = $this->getController()->getModule();
 		$userManager = $this->app->getComponent($module->userManagerId);
+		$chatManager = $this->app->getComponent('chatManager');
+		$chatManager->getPusher()->setTimeToLive(864000);
 		
 		$result = '';
 		if ( $type == 1 ){
 			$result = $userManager->makeFriends($loginedId,$helloId);
+			$message = '有用户和你成为朋友了';
 		}elseif ( $type == 2 ){
 			$result = $userManager->denyHello($loginedId,$helloId);
 		}
 		
-		if ( $result === true ){
+		if ( !is_string($result) && $result->hasErrors() ){
+			if ( $type == 1 ){
+				$alias = 'user'.$result->followed;
+				$chatManager->pushNotification(1,$alias,1,$message,'社区宝聊天',array('time'=>time()));
+			}
 			$this->response(200);
 		}else {
-			$this->response(201,$result);
+			$this->response(201,$result->getErrors());
 		}
 	}
 }

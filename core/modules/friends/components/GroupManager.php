@@ -131,4 +131,49 @@ class GroupManager extends CApplicationComponent{
 		
 		return UserOwnedGroup::model()->findAll($criteria);
 	}
+	
+	/**
+	 *
+	 * @param int $uid
+	 * @param int $status
+	 * @param string $useRelate
+	 * @return UserOwnedGroup[]
+	 */
+	public function getGroupMembers($groupId,$status=0,$useRelate=true){
+		$criteria = new CDbCriteria();
+		if ( $useRelate === true ){
+			$criteria->with = array(
+					'member' => array(
+							'with' => array('frontUser'),
+					)
+			);
+		}
+		$criteria->condition = 'group_id=:gid AND status=:s';
+		$criteria->params = array(':gid'=>$groupId,':s'=>$status);
+		
+		return UserOwnedGroup::model()->findAll($criteria);
+	}
+	
+	/**
+	 * 
+	 * @param int $groupId
+	 * @param int $uid
+	 * @return boolean
+	 */
+	public function confirmGroupAdd($groupId,$uid){
+		$groupAddInfo = UserOwnedGroup::model()->with('group')->find('group_id=:g AND user_id=:u',array(':g'=>$groupId,':u'=>$uid));
+		if ( $groupAddInfo !== null ){
+			if ( $groupAddInfo->status != 0 ){
+				$groupAddInfo->status = 0;
+				$group = $groupAddInfo->getRelated('group');
+				++$group->user_num;
+					
+				$group->save();
+				$groupAddInfo->save();
+			}
+			return true;
+		}else {
+			return false;
+		}
+	}
 }

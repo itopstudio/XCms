@@ -24,7 +24,7 @@ class getRandomListAction extends CmsAction{
 							'trends' => array(
 								'select' => 'content',
 								'limit' => 1,
-					 			'offset' => 0,
+								'offset' => 0,
 								'order' => 'publish_time DESC'
 							),
 						),

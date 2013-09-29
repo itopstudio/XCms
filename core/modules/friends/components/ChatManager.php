@@ -27,6 +27,17 @@ class ChatManager extends CApplicationComponent{
 		return Yii::app()->getComponent('pusher');
 	}
 	
+	public function pushNotification($type,$to,$sendno,$content,$title='',$extras=array()){
+		$pusher = $this->getPusher();
+		$type = intval($type);
+		if ( $type === 1 ){
+			$return = $pusher->pushNotificationWithAlias($sendno,$to,$content,$title,0,$extras);
+		}else {
+			$return = $pusher->pushNotificationWithTags($sendno,$to,$content,$title,0,$extras);
+		}
+		return $return;
+	}
+	
 	public function pushMessage($type,$to,$sendno,$content,$title='',$extras=array()){
 		$pusher = $this->getPusher();
 		$type = intval($type);
