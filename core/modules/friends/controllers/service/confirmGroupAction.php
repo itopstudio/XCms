@@ -8,6 +8,29 @@
  */
 class confirmGroupAction extends CmsAction{
 	public function run($resourceId){
+		$loginedId = $this->app->getUser()->getId();
+		if ( $loginedId !== $resourceId ){
+			$this->response(402);
+		}
 		
+		$groupId = $this->getPost('group',null);
+		$userId = $this->getPost('user',null);
+		
+		if ( $groupId === null || $userId === null ){
+			$this->response(201);
+		}
+		
+		$groupManager = $this->getController()->getModule()->getGroupManager();
+		$result = $groupManager->confirmGroupAdd($loginedId,$groupId,$userId);
+		if ( $result === true ){
+			$chatManager = $this->app->getComponent('chatManager');
+			$chatManager->getPusher()->setTimeToLive(864000);
+			$alias = 'user'.$userId;
+			$chatManager->pushNotification(1,$alias,1,'管理员同意您加入群','社区宝聊天',array('time'=>time()));
+			
+			$this->response(200);
+		}else {
+			$this->response(201);
+		}
 	}
 }

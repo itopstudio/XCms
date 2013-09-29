@@ -19,9 +19,18 @@ class applyForJoinGroupAction extends CmsAction{
 		}
 		
 		$groupManager = $this->getController()->getModule()->getGroupManager();
+		$group = $groupManager->findByPk($groupId,array('select'=>'master_id'));
+		if ( $group === null ){
+			$this->response(201);
+		}
 		$result = $groupManager->addMemberToGroup($groupId,$loginedId,50);
 		
 		if ( !$result->hasErrors() ){
+			$chatManager = $this->app->getComponent('chatManager');
+			$chatManager->getPusher()->setTimeToLive(864000);
+			$alias = 'user'.$group->master_id;
+			$chatManager->pushNotification(1,$alias,1,'有用户申请加群','社区宝聊天',array('time'=>time()));
+			
 			$this->response(200);
 		}else {
 			$this->response(201,'',$result->getErrors());

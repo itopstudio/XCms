@@ -19,6 +19,10 @@ class getGroupApplicationAction extends CmsAction{
 		}
 		
 		$groupManager = $this->getController()->getModule()->getGroupManager();
+		$group = $groupManager->findByPk($groupId);
+		if ( $group === null || $group->master_id !== $loginedId ){
+			$this->response(403,'只能查看自己创建的群信息',array());
+		}
 		$result = $groupManager->getGroupMembers($groupId,50);
 		
 		$response = array();

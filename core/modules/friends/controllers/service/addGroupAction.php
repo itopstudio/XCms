@@ -24,7 +24,7 @@ class addGroupAction extends CmsAction{
 		if ( !$result->hasErrors() ){
 			$this->response(200);
 		}else {
-			$this->response(201,'',$result);
+			$this->response(201,'',$result->getErrors());
 		}
 	}
 }

@@ -55,7 +55,7 @@ class GroupManager extends CApplicationComponent{
 					'{num}' => $this->maxCreation,
 			)) : $message;
 			$model->addError('master_id',$msg);
-			return $model->getErrors();
+			return $model;
 		}
 		$attributes = array(
 				'master_id' => $uid,
@@ -73,10 +73,8 @@ class GroupManager extends CApplicationComponent{
 					'user_id' => $uid,
 			);
 			$ownedModel->save();
-			return $model;
-		}else {
-			return $model->getErrors();
 		}
+		return $model;
 	}
 	
 	/**
@@ -87,12 +85,17 @@ class GroupManager extends CApplicationComponent{
 	 * @return boolean|array
 	 */
 	public function addMemberToGroup($groupId,$uid,$status=0){
-		$ownedModel = new UserOwnedGroup();
-		$ownedModel->attributes = array(
-				'group_id' => $groupId,
-				'user_id' => $uid,
-				'status' => $status
-		);
+		$ownedModel = UserOwnedGroup::model()->find('group_id=:g AND user_id=:u',array(':g'=>$groupId,':u'=>$uid));
+		if ( $ownedModel === null ){
+			$ownedModel = new UserOwnedGroup();
+			$ownedModel->attributes = array(
+					'group_id' => $groupId,
+					'user_id' => $uid,
+					'status' => $status
+			);
+		}else {
+			$ownedModel->status = $status;
+		}
 		$ownedModel->save();
 		return $ownedModel;
 	}
@@ -154,20 +157,29 @@ class GroupManager extends CApplicationComponent{
 		return UserOwnedGroup::model()->findAll($criteria);
 	}
 	
+	public function findByPk($pk,$condition='',$params=array()){
+		return Groups::model()->findByPk($pk,$condition,$params);
+	}
+	
 	/**
 	 * 
+	 * @param int $masterId
 	 * @param int $groupId
 	 * @param int $uid
 	 * @return boolean
 	 */
-	public function confirmGroupAdd($groupId,$uid){
+	public function confirmGroupAdd($masterId,$groupId,$uid){
 		$groupAddInfo = UserOwnedGroup::model()->with('group')->find('group_id=:g AND user_id=:u',array(':g'=>$groupId,':u'=>$uid));
 		if ( $groupAddInfo !== null ){
+			$group = $groupAddInfo->getRelated('group');
+			if ( $group->master_id !== $masterId ){
+				return false;
+			}
+			
 			if ( $groupAddInfo->status != 0 ){
 				$groupAddInfo->status = 0;
-				$group = $groupAddInfo->getRelated('group');
 				++$group->user_num;
-					
+				
 				$group->save();
 				$groupAddInfo->save();
 			}
