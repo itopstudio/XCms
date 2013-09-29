@@ -27,6 +27,7 @@ class UserOwnedGroup extends CmsActiveRecord
 		// will receive user inputs.
 		return array(
 			array('group_id, user_id', 'required'),
+			array('user_id','unionUnique','unionAttributes'=>array('group_id')),
 			array('remark', 'length', 'max'=>15),
 			array('status', 'safe')
 		);

@@ -19,9 +19,9 @@ class addGroupAction extends CmsAction{
 			$this->response(201);
 		}
 		$groupManager = $this->getController()->getModule()->getGroupManager();
-		$result = $groupManager->createGroup($loginedId,$name,$description);
+		$result = $groupManager->createGroup($loginedId,$name,0,$description);
 		
-		if ( $result === true ){
+		if ( !$result->hasErrors() ){
 			$this->response(200);
 		}else {
 			$this->response(201,'',$result);

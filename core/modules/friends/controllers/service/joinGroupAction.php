@@ -21,10 +21,10 @@ class joinGroupAction extends CmsAction{
 		$groupManager = $this->getController()->getModule()->getGroupManager();
 		$result = $groupManager->addMemberToGroup($groupId,$loginedId);
 		
-		if ( $result === true ){
+		if ( !$result->hasErrors() ){
 			$this->response(200);
 		}else {
-			$this->response(201,'',$result);
+			$this->response(201,'',$result->getErrors());
 		}
 	}
 }

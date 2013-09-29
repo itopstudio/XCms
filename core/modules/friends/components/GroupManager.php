@@ -10,12 +10,22 @@ class GroupManager extends CApplicationComponent{
 	public $maxCreation = 3;
 	
 	/**
+	 * count common group
 	 * 
 	 * @param int $uid
+	 * @param int $type
 	 * @return int
 	 */
-	public function countUserCreation($uid){
-		return Groups::model()->count('master_id=:uid',array(':uid'=>$uid));
+	public function countGroupCreation($uid,$type=0){
+		return Groups::model()->count('`master_id`=:uid AND `type`=:t',array(':uid'=>$uid,':t'=>$type));
+	}
+	
+	public function count($criteria,$params=array()){
+		return Groups::model()->count($criteria,$params);
+	}
+	
+	public function findCreatedGroups($uid,$type=0){
+		return Groups::model()->findAll('`master_id`=:uid AND `type`=:t',array(':uid'=>$uid,':t'=>$type));
 	}
 	
 	/**
@@ -32,16 +42,19 @@ class GroupManager extends CApplicationComponent{
 	 * 
 	 * @param int $uid
 	 * @param string $name
+	 * @param int $type
 	 * @param string $description
+	 * @param string $message
 	 * @return boolean
 	 */
-	public function createGroup($uid,$name,$description=null){
+	public function createGroup($uid,$name,$type=0,$description=null,$message=''){
 		$model = new Groups();
 		
-		if ( $this->countUserCreation($uid) >= $this->maxCreation ){
-			$model->addError('master_id',Yii::t('friends','you can only create {num} group(s) in total',array(
+		if ( $this->countGroupCreation($uid,$type) >= $this->maxCreation ){
+			$msg = $message === '' ? Yii::t('friends','you can only create {num} group(s) in total',array(
 					'{num}' => $this->maxCreation,
-			)));
+			)) : $message;
+			$model->addError('master_id',$msg);
 			return $model->getErrors();
 		}
 		$attributes = array(
@@ -49,6 +62,7 @@ class GroupManager extends CApplicationComponent{
 				'group_name' => $name,
 				'description' => $description,
 				'creation_time' => time(),
+				'type' => $type
 		);
 		
 		$model->attributes = $attributes;
@@ -59,7 +73,7 @@ class GroupManager extends CApplicationComponent{
 					'user_id' => $uid,
 			);
 			$ownedModel->save();
-			return true;
+			return $model;
 		}else {
 			return $model->getErrors();
 		}
@@ -79,11 +93,8 @@ class GroupManager extends CApplicationComponent{
 				'user_id' => $uid,
 				'status' => $status
 		);
-		if ( $ownedModel->save() ){
-			return true;
-		}else {
-			return $ownedModel->getErrors();
-		}
+		$ownedModel->save();
+		return $ownedModel;
 	}
 	
 	/**

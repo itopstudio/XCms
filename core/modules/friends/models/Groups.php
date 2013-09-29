@@ -37,7 +37,7 @@ class Groups extends CmsActiveRecord
 		// will receive user inputs.
 		return array(
 			array('master_id, group_name, creation_time', 'required'),
-			array('description,announcement,admin_num', 'safe'),
+			array('description,announcement,admin_num,type', 'safe'),
 		);
 	}
 
