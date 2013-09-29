@@ -93,7 +93,7 @@ class UserModel extends SingleInheritanceModel
 			'AuthPermissions' => array(self::MANY_MANY, 'AuthPermission', '{{auth_user_permission}}(user_id, permission_id)'),
 			'AuthGroups' => array(self::MANY_MANY, 'AuthGroups', '{{user_group}}(user_id, group_id)'),
 			'AuthRoles' => array(self::MANY_MANY, 'AuthRoles', '{{user_role}}(user_id, role_id)'),
-			'friends' => array(self::HAS_MANY,'UserInterest','follower','condition'=>'status=1'),
+			'friends' => array(self::HAS_MANY,'UserInterest','follower','alias'=>'friends','condition'=>'friends.status=1'),
 			'chatGroups' => array(self::MANY_MANY,'Groups','{{user_owned_group}}(group_id,user_id)'),
 			'chatRooms' => array(self::MANY_MANY,'ChatRoom','{{user_owned_chat}}(room_id,user_id)'),
 			'trends' => array(self::HAS_MANY,'UserTrends','user_id'),

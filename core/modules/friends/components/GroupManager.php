@@ -42,6 +42,7 @@ class GroupManager extends CApplicationComponent{
 			$model->addError('master_id',Yii::t('friends','you can only create {num} group(s) in total',array(
 					'{num}' => $this->maxCreation,
 			)));
+			return $model->getErrors();
 		}
 		$attributes = array(
 				'master_id' => $uid,
