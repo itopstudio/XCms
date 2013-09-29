@@ -112,6 +112,23 @@ class GroupManager extends CApplicationComponent{
 					':uid' => $uid
 			)) > 0;
 		}
+	}
+	
+	/**
+	 * 
+	 * @param int $uid
+	 * @param int $status
+	 * @param string $useRelate
+	 * @return UserOwnedGroup[]
+	 */
+	public function getGroups($uid,$status=0,$useRelate=true){
+		$criteria = new CDbCriteria();
+		if ( $useRelate === true ){
+			$criteria->with = array('group');
+		}
+		$criteria->condition = 'user_id=:uid AND status=:s';
+		$criteria->params = array(':uid'=>$uid,':s'=>$status);
 		
+		return UserOwnedGroup::model()->findAll($criteria);
 	}
 }

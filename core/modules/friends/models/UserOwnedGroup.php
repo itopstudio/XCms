@@ -41,6 +41,7 @@ class UserOwnedGroup extends CmsActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+				'group' => array(self::BELONGS_TO,'Groups','group_id')
 		);
 	}
 
