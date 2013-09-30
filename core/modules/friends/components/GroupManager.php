@@ -71,6 +71,7 @@ class GroupManager extends CApplicationComponent{
 			$ownedModel->attributes = array(
 					'group_id' => $model->getPrimaryKey(),
 					'user_id' => $uid,
+					'status' => $type
 			);
 			$ownedModel->save();
 		}
@@ -151,8 +152,8 @@ class GroupManager extends CApplicationComponent{
 					)
 			);
 		}
-		$criteria->condition = 'group_id=:gid AND status=:s';
-		$criteria->params = array(':gid'=>$groupId,':s'=>$status);
+		$criteria->condition = 'group_id=:gid';
+		$criteria->params = array(':gid'=>$groupId);
 		
 		return UserOwnedGroup::model()->findAll($criteria);
 	}
@@ -173,16 +174,14 @@ class GroupManager extends CApplicationComponent{
 	 * @param int $uid
 	 * @param string $criteria
 	 */
-	public function findMasteredGroups($uid,$criteria=null){
-		if ( $criteria === null ){
-			$criteria = new CDbCriteria();
-		}elseif ( is_array($criteria) ){
-			$criteria = new CDbCriteria($criteria);
-		}
+	public function findMasteredGroups($uid,$type=0){
+		$criteria = new CDbCriteria();
 		$criteria->addCondition('master_id=:uid AND `type`=:t');
-		$criteria->params[':uid'] = $uid;
-		$criteria->params[':t'] = 0;
-				
+		$criteria->params = array(
+				':uid' => $uid,
+				':t' => $type
+		);
+			
 		return Groups::model()->findAll($criteria);
 	}
 	

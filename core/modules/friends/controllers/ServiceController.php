@@ -38,9 +38,12 @@ class ServiceController extends CmsController{
 				'getTrends',
 				'getSayHelloToMe',
 				'getGroups' => array('class'=>'getMyGroups'),
+				'getGroupMember',
+				'getJoinedGroups',
 				'getSearchGroups' => array('class'=>'getSearchGroupsList'),
 				'getRandomGroups' => array('class'=>'getRandomGroupsList'),
 				'getRandomFriends' => array('class'=>'getRandomFriendsList'),
+				'getSearchFriends',
 				'chat',
 				'getOfflineMessage'
 		);
