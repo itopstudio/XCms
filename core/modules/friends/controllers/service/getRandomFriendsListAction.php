@@ -6,7 +6,7 @@
  * Date 2013-9-17
  * Encoding UTF-8
  */
-class getRandomListAction extends CmsAction{
+class getRandomFriendsListAction extends CmsAction{
 	public function run($resourceId){
 		$loginedId = $this->app->getUser()->getId();
 		if ( $loginedId !== $resourceId ){

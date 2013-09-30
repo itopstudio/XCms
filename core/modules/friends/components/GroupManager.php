@@ -157,8 +157,77 @@ class GroupManager extends CApplicationComponent{
 		return UserOwnedGroup::model()->findAll($criteria);
 	}
 	
+	/**
+	 * 
+	 * @param int $pk
+	 * @param string|CDbCriteria $condition
+	 * @param array $params
+	 * @return CActiveRecord
+	 */
 	public function findByPk($pk,$condition='',$params=array()){
 		return Groups::model()->findByPk($pk,$condition,$params);
+	}
+	
+	/**
+	 * 
+	 * @param int $uid
+	 * @param string $criteria
+	 */
+	public function findMasteredGroups($uid,$criteria=null){
+		if ( $criteria === null ){
+			$criteria = new CDbCriteria();
+		}elseif ( is_array($criteria) ){
+			$criteria = new CDbCriteria($criteria);
+		}
+		$criteria->addCondition('master_id=:uid AND `type`=:t');
+		$criteria->params[':uid'] = $uid;
+		$criteria->params[':t'] = 0;
+				
+		return Groups::model()->findAll($criteria);
+	}
+	
+	/**
+	 * 
+	 * @param int $listSize
+	 * @param string $criteria
+	 * @return CActiveRecord[]
+	 */
+	public function findRandomList($listSize,$criteria=null){
+		$model = Groups::model();
+		$condition = '`type`=0';
+		
+		$count = $model->count($condition);
+		
+		if ( $criteria === null ){
+			$criteria = new CDbCriteria();
+		}elseif ( is_array($criteria) ){
+			$criteria = new CDbCriteria($criteria);
+		}
+		
+		$criteria->limit = $listSize;
+		if ( $listSize >= $count ){
+			$criteria->offset = 0;
+		}else {
+			$criteria->offset = mt_rand(0,$count-$listSize);
+		}
+		
+		return $model->findAll($criteria);
+	}
+	
+	/**
+	 *
+	 * @param int $listSize
+	 * @param string $criteria
+	 */
+	public function findBySearchName($name,$criteria=null){
+		if ( $criteria === null ){
+			$criteria = new CDbCriteria();
+		}elseif ( is_array($criteria) ){
+			$criteria = new CDbCriteria($criteria);
+		}
+		
+		$criteria->addSearchCondition('group_name',$name);
+		return Groups::model()->findAll($criteria);
 	}
 	
 	/**
