@@ -20,6 +20,7 @@ class CmsModule extends CWebModule{
 	public static function loadModels($moduleId,$models='*'){
 		static $modulesConfig = null;
 		static $class = null;
+		static $enabled = null;
 		
 		if ( $modulesConfig === null ){
 			$modulesConfig = Yii::app()->getModules();
@@ -42,13 +43,13 @@ class CmsModule extends CWebModule{
 				$module = $class;
 			}
 			
-			Yii::app()->setModules( array($moduleId=>array('enabled'=>false)) );
-			$module::loadSelfModels();
-			if ( $enabled === null ){
-				Yii::app()->setModules( array($moduleId=>array('enabled'=>true)) );
-			}else {
-				Yii::app()->setModules( array($moduleId=>array('enabled'=>$enabled)) );
-			}
+// 			Yii::app()->setModules( array($moduleId=>array('enabled'=>false)) );
+ 			$module::loadSelfModels();
+// 			if ( $enabled === null ){
+// 				Yii::app()->setModules( array($moduleId=>array('enabled'=>true)) );
+// 			}else {
+// 				Yii::app()->setModules( array($moduleId=>array('enabled'=>$enabled)) );
+// 			}
 		}else {
 			return false;
 		}

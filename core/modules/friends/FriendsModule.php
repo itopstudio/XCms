@@ -18,7 +18,7 @@ class FriendsModule extends CmsModule{
 		Yii::import('friends.components.*');
 		Yii::import('friends.models.*');
 		Yii::app()->getUser()->setStateKeyPrefix(Yii::app()->params['frontUserStateKeyPrefix']);
-		
+		die;
 		Yii::app()->setComponents(array(
 				'trendsManager' => array(
 						'class' => 'friends.components.TrendsManager'
