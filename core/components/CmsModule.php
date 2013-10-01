@@ -18,9 +18,39 @@ class CmsModule extends CWebModule{
 	 * @param string $models
 	 */
 	public static function loadModels($moduleId,$models='*'){
-		$module = Yii::app()->getModule($moduleId);
-		if ( $module !== null ){
-			$module->loadSelfModels();
+		static $modulesConfig = null;
+		static $class = null;
+		
+		if ( $modulesConfig === null ){
+			$modulesConfig = Yii::app()->getModules();
+		}
+		
+		if ( $modulesConfig !== null && isset($modulesConfig[$moduleId]['class']) ){
+			if ( $class !== $modulesConfig[$moduleId]['class'] ){
+				if ( isset($modulesConfig[$moduleId]['enabled']) ){
+					$enabled = $modulesConfig[$moduleId]['enabled'];
+				}else {
+					$enabled = null;
+				}
+				$class = $modulesConfig[$moduleId]['class'];
+				Yii::import($class,true);
+			}
+			
+			if ( ($pos=strrpos($class,'.')) !== false ){
+				$module = substr($class,$pos+1);
+			}else {
+				$module = $class;
+			}
+			
+			Yii::app()->setModules( array($moduleId=>array('enabled'=>false)) );
+			$module::loadSelfModels();
+			if ( $enabled === null ){
+				Yii::app()->setModules( array($moduleId=>array('enabled'=>true)) );
+			}else {
+				Yii::app()->setModules( array($moduleId=>array('enabled'=>$enabled)) );
+			}
+		}else {
+			return false;
 		}
 	}
 	
@@ -28,7 +58,7 @@ class CmsModule extends CWebModule{
 	 * 
 	 * @throws Exception
 	 */
-	public function loadSelfModels(){
+	public static function loadSelfModels(){
 		throw new Exception(Yii::t('cmsModule','loadSelfModels must be overwrite'));
 	}
 }

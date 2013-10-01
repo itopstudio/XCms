@@ -11,7 +11,7 @@ class AreaModule extends CmsModule{
 		Yii::import('area.models.*');
 	}
 	
-	public function loadSelfModels(){
+	public static function loadSelfModels(){
 		Yii::import('area.models.*');
 	}
 }

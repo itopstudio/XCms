@@ -7,15 +7,15 @@
  * Encoding UTF-8
  */
 class CmsApplication extends CWebApplication implements ArrayAccess{
-	private $_preloadModels = array();
+	public $preloadModels = array();
 	
-	/**
-	 * load models those belongs to a specified module
-	 * 
-	 * @param array $preloadModels
-	 */
-	public function setPreloadModels($preloadModels){
-		foreach ( $preloadModels as $module => $models ){
+	protected function init(){
+		parent::init();
+		$this->preloadModels();
+	}
+	
+	protected function preloadModels(){
+		foreach ( $this->preloadModels as $module => $models ){
 			if ( is_string($module) ){//use 'FooModule' => 'BarModel'
 				if ( is_array($models) ){
 					foreach ( $models as $model ){
