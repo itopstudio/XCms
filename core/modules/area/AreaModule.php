@@ -8,10 +8,10 @@
  */
 class AreaModule extends CmsModule{
 	public function init(){
-		Yii::import('area.models.*');
+		Yii::import('cms.modules.area.models.*');
 	}
 	
 	public static function loadSelfModels(){
-		Yii::import('area.models.*');
+		Yii::import('cms.modules.area.models.*');
 	}
 }

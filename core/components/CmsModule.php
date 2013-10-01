@@ -27,13 +27,14 @@ class CmsModule extends CWebModule{
 		}
 		
 		if ( $modulesConfig !== null && isset($modulesConfig[$moduleId]['class']) ){
-			if ( $class !== $modulesConfig[$moduleId]['class'] ){
-				if ( isset($modulesConfig[$moduleId]['enabled']) ){
-					$enabled = $modulesConfig[$moduleId]['enabled'];
+			$config = $modulesConfig[$moduleId];
+			if ( $class !== $config['class'] ){
+				if ( isset($config['enabled']) ){
+					$enabled = $config['enabled'];
 				}else {
 					$enabled = null;
 				}
-				$class = $modulesConfig[$moduleId]['class'];
+				$class = $config['class'];
 				Yii::import($class,true);
 			}
 			
@@ -43,13 +44,16 @@ class CmsModule extends CWebModule{
 				$module = $class;
 			}
 			
-// 			Yii::app()->setModules( array($moduleId=>array('enabled'=>false)) );
- 			$module::loadSelfModels();
-// 			if ( $enabled === null ){
-// 				Yii::app()->setModules( array($moduleId=>array('enabled'=>true)) );
-// 			}else {
-// 				Yii::app()->setModules( array($moduleId=>array('enabled'=>$enabled)) );
-// 			}
+			$config['enabled'] = false;
+			Yii::app()->setModules( array($moduleId=>$config) );
+			$module::loadSelfModels();
+			if ( $enabled === null ){
+				$config['enabled'] = true;
+				Yii::app()->setModules( array($moduleId=>$config) );
+			}else {
+				$config['enabled'] = $enabled;
+				Yii::app()->setModules( array($moduleId=>$config) );
+			}
 		}else {
 			return false;
 		}

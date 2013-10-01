@@ -152,8 +152,27 @@ class GroupManager extends CApplicationComponent{
 					)
 			);
 		}
-		$criteria->condition = 'group_id=:gid';
-		$criteria->params = array(':gid'=>$groupId);
+		$criteria->condition = 'group_id=:gid AND status=:s';
+		$criteria->params = array(':gid'=>$groupId,':s'=>$status);
+		
+		return UserOwnedGroup::model()->findAll($criteria);
+	}
+	
+	public function getMasteredGroupsMembers($uid,$status=0,$useRelate=true){
+		$criteria = new CDbCriteria();
+		if ( $useRelate === true ){
+			$criteria->with = array(
+					'group' => array(
+							'select' => 'id',
+							'condition' => 'master_id=:uid'
+					),
+					'member' => array(
+							'with' => array('frontUser'),
+					)
+			);
+		}
+		$criteria->condition = 'status=:s';
+		$criteria->params = array(':uid'=>$uid,':s'=>$status);
 		
 		return UserOwnedGroup::model()->findAll($criteria);
 	}

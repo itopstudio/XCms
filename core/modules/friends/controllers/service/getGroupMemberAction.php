@@ -14,12 +14,14 @@ class getGroupMemberAction extends CmsAction{
 		}
 		
 		$groupId = $this->getQuery('group',null);
-		if ( $groupId === null ){
+		$type = $this->getQuery('type',null);
+		if ( $groupId === null || $type === null ){
 			$this->response(201);
 		}
+		$status = $type == 1 ? 0 : 100;
 		
 		$groupManager = $this->getController()->getModule()->getGroupManager();
-		$list = $groupManager->getGroupMembers($groupId);
+		$list = $groupManager->getGroupMembers($groupId,$status);
 		
 		$response = array();
 		foreach ( $list as $l ){

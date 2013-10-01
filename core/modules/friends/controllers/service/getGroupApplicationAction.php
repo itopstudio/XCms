@@ -13,22 +13,15 @@ class getGroupApplicationAction extends CmsAction{
 			$this->response(402);
 		}
 		
-		$groupId = $this->getQuery('group',null);
-		if ( $groupId === null ){
-			$this->response(201);
-		}
-		
 		$groupManager = $this->getController()->getModule()->getGroupManager();
-		$group = $groupManager->findByPk($groupId);
-		if ( $group === null || $group->master_id !== $loginedId ){
-			$this->response(403,'只能查看自己创建的群信息',array());
-		}
-		$result = $groupManager->getGroupMembers($groupId,50);
-		
 		$response = array();
+		
+		$result = $groupManager->getMasteredGroupsMembers($loginedId,50);
+		
 		foreach ( $result as $r ){
 			$member = $r->getRelated('member');
 			$response[] = array(
+					'groupId' => $r->getRelated('group')->getPrimaryKey(),
 					'id' => $member->getPrimaryKey(),
 					'nickname' => $member->getAttribute('nickname'),
 					'icon' => $member->getRelated('frontUser')->getAttribute('icon')

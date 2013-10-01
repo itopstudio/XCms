@@ -15,10 +15,10 @@ class FriendsModule extends CmsModule{
 	
 	protected function init(){
 		parent::init();
-		Yii::import('friends.components.*');
-		Yii::import('friends.models.*');
+		Yii::import('cms.modules.friends.components.*');
+		Yii::import('cms.modules.friends.models.*');
 		Yii::app()->getUser()->setStateKeyPrefix(Yii::app()->params['frontUserStateKeyPrefix']);
-		//die;
+		
 		Yii::app()->setComponents(array(
 				'trendsManager' => array(
 						'class' => 'friends.components.TrendsManager'
@@ -40,6 +40,6 @@ class FriendsModule extends CmsModule{
 	}
 	
 	public static function loadSelfModels(){
-		Yii::import('friends.models.*');
+		Yii::import('cms.modules.friends.models.*');
 	}
 }
