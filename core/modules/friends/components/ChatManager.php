@@ -49,8 +49,31 @@ class ChatManager extends CApplicationComponent{
 		return $return;
 	}
 	
-	public function pushOfflineMessage($uid,$startFrom,$maxConnection=50){
+	public function pushOfflineMessage($uid,$startFrom,$title='',$maxConnection=50){
+		$userMessage = UserMessage::model()->findAll('sender=:u',array(':u'=>$uid));
+		$messages = array();
+		$extras = array(1,$uid);
+		$extras[2] = $uid;
+		$pusher = $this->getPusher();
 		
+		foreach ( $userMessage as $um ){
+			$extras[1] = $um->sender;
+			$extras[3] = $um->send_time;
+			$messages[] = array(
+					$um->getPrimaryKey(),
+					$um->content,
+					$title,
+					0,
+					'',
+					$extras,
+					2,
+					'user'.$uid,
+					3,
+					null
+			);
+		}
+		
+		$pusher->pushMulti($messages,1);
 	}
 	
 	/**

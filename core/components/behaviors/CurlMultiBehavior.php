@@ -38,6 +38,7 @@ class CurlMultiBehavior extends CBehavior{
 	 * @return boolean
 	 */
 	public function exec(){
+		$multiHandler = $this->getCurlMultiHandler();
 		if ( $this->_handlers === array() ){
 			return false;
 		}
@@ -46,24 +47,24 @@ class CurlMultiBehavior extends CBehavior{
 			if ( $count >= $this->_maxConnections ){
 				break;
 			}
-			curl_multi_add_handle($this->_multiHandler,$handler);
+			curl_multi_add_handle($multiHandler,$handler);
 		}
 		
 		$active = 0;
 		do{
-			while ( ($code=curl_multi_exec($this->_multiHandler,$active)) === CURLM_CALL_MULTI_PERFORM );
+			while ( ($code=curl_multi_exec($multiHandler,$active)) === CURLM_CALL_MULTI_PERFORM );
 			if ( $code !== CURLM_OK ){
 				return false;
 			}
 			
-			while ( ($reader=curl_multi_info_read($this->_multiHandler)) !== false ){
+			while ( ($reader=curl_multi_info_read($multiHandler)) !== false ){
 				if ( $reader['result'] === CURLM_OK ){
 					$this->_readableHandlers[] = $reader['handle'];
 				}
 			}
 			
 			if ( $active > 0 ){
-				curl_multi_select($this->_multiHandler,0.5);
+				curl_multi_select($multiHandler,0.5);
 			}
 			
 		}while ( $active > 0 );

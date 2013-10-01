@@ -217,10 +217,11 @@ class JPush extends PushBase{
 		}
 	}
 	
-	public function pushMulti($data){
+	public function pushMulti($data,$maxConnection=50){
 		$handlers = array();
 		$curl = $this->curl;
 		$curlMulti = $this->curlMulti;
+		$curlMulti->setMaxConnections($maxConnection);
 		
 		foreach ( $data as $d ){
 			list($sendno,$msgContent,$msgTitle,$builderId,$contentType,
@@ -244,14 +245,14 @@ class JPush extends PushBase{
 			$this->buildMessage();
 			$this->buildUrl();
 			
-			$handlers[] = $curl->getHandler(true);
+			$handlers[] = $curl->getCurlHandler(true);
 			$curl->setUrl($this->_requestUrl);
 			$curl->setReturn(true);
 			$curl->setMethod('POST');
-			$curl->setRequestBody($ths->_requestData);
+			$curl->setRequestBody($this->_requestData);
 			$curl->curlBuildOpts();
-			$ths->_requestData = null;
-			$ths->_requestData = array();
+			$this->_requestData = null;
+			$this->_requestData = array();
 		}
 		
 		$curlMulti->addHandlersToMultiHandler($handlers);

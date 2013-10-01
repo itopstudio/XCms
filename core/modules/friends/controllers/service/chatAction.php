@@ -40,7 +40,7 @@ class chatAction extends CmsAction{
 			if ( $model->save() ){
 				$sendno = $model->getPrimaryKey();
 				$content = $attributes['content'];
-				$extras = array($type,$loginedUid,$model->send_time);
+				$extras = array($type,$loginedUid,$sendTo,$model->send_time);
 				
 				$result = $chatManager->pushMessage($type,$sendTo,$sendno,$content,'社区宝新消息',$extras);
 				
