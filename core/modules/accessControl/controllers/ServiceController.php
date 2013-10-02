@@ -7,10 +7,15 @@
  * Encoding UTF-8
  */
 class ServiceController extends CmsController{
+	public $actionClassPathAlias = 'access.controllers';
+	
+	public function filters(){
+		return array();
+	}
 	
 	public function getActionClass(){
 		return array(
-				
+				'getOperationChildren'
 		);
 	}
 }

@@ -9,10 +9,10 @@
 class AccessControlModule extends CmsModule{
 	protected function init(){
 		parent::init();
-		Yii::import('accessControl.controllers.*');
+		Yii::import('cms.modules.accessControl.controllers.*');
 	}
 	
-	public function loadSelfModels(){
-		Yii::import('accessControl.models.*');
+	public static function loadSelfModels(){
+		Yii::import('cms.modules.accessControl.models.*');
 	}
 }
