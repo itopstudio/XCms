@@ -7,17 +7,14 @@
  * Encoding UTF-8
  */
 class updateRemarkAction extends CmsAction{
-	public function run($resourceId){
+	public function run($resourceId,$id){
 		$loginedId = $this->app->getUser()->getId();
 		if ( $loginedId !== $resourceId ){
 			$this->response(402);
 		}
 		
-		$target = $this->getPut('target',null);
+		$target = $id;
 		$remark = $this->getPut('remark',null);
-		if ( $target === null ){
-			$this->response(201);
-		}
 		
 		$module = $this->getController()->getModule();
 		$userManager = $this->app->getComponent($module->userManagerId);

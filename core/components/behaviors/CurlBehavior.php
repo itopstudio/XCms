@@ -138,6 +138,9 @@ class CurlBehavior extends CBehavior{
 			return false;
 		}
 		$ch = $this->getCurlHandler();
+		if ( $this->_urlParams !== '' ){
+			$this->setUrl($this->_url.'?'.$this->_urlParams);
+		}
 		curl_setopt_array($ch,$this->_curlOptions);
 	}
 	
