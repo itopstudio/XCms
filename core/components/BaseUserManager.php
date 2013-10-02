@@ -121,6 +121,12 @@ abstract class BaseUserManager extends CApplicationComponent{
 			$this->makeFriends($from,$sayHelloed->id);
 			return true;
 		}else {
+			$toUser = $this->findByPk($to);
+			if ( $toUser === null ){
+				$interest->addError('followed','打招呼用户不存在');
+				return $interest;
+			}
+			
 			$attributes = array(
 					'follower' => $from,
 					'followed' => $to,

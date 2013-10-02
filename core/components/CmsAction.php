@@ -86,4 +86,12 @@ class CmsAction extends CAction{
 	public function getRequestParam($name,$defaultValue=null){
 		return $this->getController()->getRequestParam($name,$defaultValue);
 	}
+	
+	public function render($view,$data=null,$return=false){
+		return $this->getController()->render($view,$data,$return);
+	}
+	
+	public function setPageTitle($title){
+		$this->getController()->setPageTitle($title);
+	}
 }

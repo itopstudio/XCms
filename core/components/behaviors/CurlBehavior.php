@@ -137,7 +137,7 @@ class CurlBehavior extends CBehavior{
 		if ( $this->getCanBuildOpts() === false ){
 			return false;
 		}
-		$ch = $this->getCurlHandler();
+		$ch = $this->getCurlHandler(true);
 		if ( $this->_urlParams !== '' ){
 			$this->setUrl($this->_url.'?'.$this->_urlParams);
 		}
@@ -248,7 +248,7 @@ class CurlBehavior extends CBehavior{
 	
 	public function setError(){
 		$this->_error = curl_errno($this->_ch);
-		$this->_errorno = curl_errno($this->_ch);
+		$this->_errno = curl_errno($this->_ch);
 	}
 	
 	/**

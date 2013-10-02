@@ -129,13 +129,26 @@ class AuthManager extends CApplicationComponent{
 	 * @return CActiveRecord.return NULL if model is not found
 	 */
 	public function getItem($type,$pk,$condition='',$params=array()){
+		$model = $this->getItemModel($type);
+		if ( $model === null ){
+			return null;
+		}
+		return $model->findByPk($pk,$condition,$params);
+	}
+	
+	/**
+	 * 
+	 * @param string $type
+	 * @return CActiveRecord
+	 */
+	public function getItemModel($type){
 		$class = $this->typePrefix.$type;
 		try {
 			$model = $class::model();
 		}catch (Exception $e){
 			return null;
 		}
-		return $model->findByPk($pk,$condition,$params);
+		return $model;
 	}
 	
 	/**
