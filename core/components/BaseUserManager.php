@@ -177,6 +177,23 @@ abstract class BaseUserManager extends CApplicationComponent{
 	
 	/**
 	 * 
+	 * @param int $follower
+	 * @param int $followed
+	 * @param string $remark
+	 * @return boolean
+	 */
+	public function modifyRemark($follower,$followed,$remark){
+		$interest = UserInterest::model()->find('follower=:r AND followed=:d',array(':r'=>$follower,':d'=>$followed));
+		if ( $interest === null ){
+			return false;
+		}
+		$interest->remark = $remark;
+		$interest->save();
+		return true;
+	}
+	
+	/**
+	 * 
 	 * @param int $uid
 	 * @param int $sayHelloId
 	 * @return boolean|string

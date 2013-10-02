@@ -174,11 +174,12 @@ class CmsController extends CController{
 	}
 	
 	public function accessRules(){
+		$module = $this->getModule();
 		return array(
 				array('allow',
 					'roles' => array(
 							array(
-								'module' => $this->getModule()->getId(),
+								'module' => $module === null ? null : $module->getId(),
 								'controller' => $this->getId(),
 								'action' => $this->getAction()->getId()),
 					),

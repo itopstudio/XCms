@@ -33,6 +33,8 @@ class ServiceController extends CmsController{
 				'removeFriend' => array('class'=>'breakUp'),
 				'removeTrend',
 				
+				'updateRemark',
+				
 				'getGroupApplication',
 				'getFriendsTrends',
 				'getTrends',
