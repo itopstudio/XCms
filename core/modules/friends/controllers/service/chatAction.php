@@ -23,6 +23,17 @@ class chatAction extends CmsAction{
 		$content = $this->getPost('content',null);
 		
 		if ( $with !== null && $type !== null && $content !== null ){
+			if ( $type === 4 ){
+				$sendTo = 'sbtb';
+				$extras = array($type,$this->app->getUser()->getState('nickname'),'sbtb',time());
+				$result = $chatManager->pushMessage($type,$sendTo,1,$content,'社区宝新消息',$extras);
+				if ( $result->hasError === false ){
+					$this->response(200);
+				}else {
+					$this->response($result->errorCode,$result->errorMsg);
+				}
+			}
+			
 			$attributes = array(
 					'sender' => $loginedUid,
 					'content' => $content,

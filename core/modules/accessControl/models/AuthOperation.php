@@ -40,7 +40,7 @@ class AuthOperation extends LevelModel
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('operation_name, controller, action', 'required'),
+			array('operation_name, controller, action', 'required','message'=>'{attribute}不能为空'),
 			array('operation_name', 'length', 'max'=>20),
 			array('module, controller, action', 'length', 'max'=>30),
 			array('description,fid, level, lft, rgt,', 'safe'),
@@ -70,11 +70,11 @@ class AuthOperation extends LevelModel
 		return array(
 			'id' => 'ID',
 			'menu_level' => 'Menu Level',
-			'operation_name' => 'Operation Name',
-			'description' => 'Description',
-			'module' => 'Module',
-			'controller' => 'Controller',
-			'action' => 'Action',
+			'operation_name' => '操作名称',
+			'description' => '操作描述',
+			'module' => '模块名称',
+			'controller' => '控制器名称',
+			'action' => '动作名称',
 		);
 	}
 

@@ -94,4 +94,16 @@ class CmsAction extends CAction{
 	public function setPageTitle($title){
 		$this->getController()->setPageTitle($title);
 	}
+	
+	public function redirect($url,$terminate=true,$statusCode=302){
+		$this->getController()->redirect($url,$terminate,$statusCode);
+	}
+	
+	public function createUrl($route,$params=array(),$ampersand='&'){
+		return $this->getController()->createUrl($route,$params,$ampersand);
+	}
+	
+	public function createAbsoluteUrl($route,$params=array(),$schema='',$ampersand='&'){
+		return $this->getController()->createAbsoluteUrl($route,$params,$schema,$ampersand);
+	}
 }

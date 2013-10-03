@@ -129,7 +129,7 @@ class AuthManager extends CApplicationComponent{
 	 * @return CActiveRecord.return NULL if model is not found
 	 */
 	public function getItem($type,$pk,$condition='',$params=array()){
-		$model = $this->getItemModel($type);
+		$model = $this->getItemModel($type,false);
 		if ( $model === null ){
 			return null;
 		}
@@ -139,16 +139,43 @@ class AuthManager extends CApplicationComponent{
 	/**
 	 * 
 	 * @param string $type
+	 * @param boolean $new
 	 * @return CActiveRecord
 	 */
-	public function getItemModel($type){
+	public function getItemModel($type,$new=true){
 		$class = $this->typePrefix.$type;
 		try {
-			$model = $class::model();
+			if ( $new === true ){
+				$model = new $class;
+			}else {
+				$model = $class::model();
+			}
 		}catch (Exception $e){
 			return null;
 		}
 		return $model;
+	}
+	
+	/**
+	 * 
+	 * @param string $type
+	 * @param int $pk
+	 * @return boolean
+	 */
+	public function removeItem($type,$pk){
+		if ( $pk instanceof CActiveRecord ){
+			return $pk->delete() > 0;
+		}
+		$model = $this->getItemModel($type,false);
+		if ( $model === null ){
+			return false;
+		}
+		
+		$obj = $model->findByPk($pk);
+		if ( $obj === null ){
+			return false;
+		}
+		return $obj->delete() > 0;
 	}
 	
 	/**
@@ -170,6 +197,7 @@ class AuthManager extends CApplicationComponent{
 			return false;
 		}
 		$opPermissions = $op->AuthPermissions;
+		$unsafePermissions = array();
 		foreach ( $opPermissions as $opPermission ){
 			$key = 'p'.$opPermission->getPrimaryKey();
 			$unsafePermissions[$key] = $opPermission;

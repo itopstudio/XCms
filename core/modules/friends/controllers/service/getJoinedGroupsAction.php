@@ -20,16 +20,18 @@ class getJoinedGroupsAction extends CmsAction{
 		$t = $type == 1 ? 0 : 100;
 		
 		$groupManager = $this->getController()->getModule()->getGroupManager();
-		$list = $groupManager->getGroups($loginedId,$t);
+		$list = $groupManager->getGroups($loginedId,0);
 		$response = array();
 		foreach ( $list as $l ){
 			$group = $l->group;
-			$response[] = array(
-					'id' => $group->getPrimaryKey(),
-					'name' => $group->group_name,
-					'description' => $group->description,
-					'userNum' => $group->user_num
-			);
+			if ( $group->type == $t ){
+				$response[] = array(
+						'id' => $group->getPrimaryKey(),
+						'name' => $group->group_name,
+						'description' => $group->description,
+						'userNum' => $group->user_num
+				);
+			}
 		}
 		$this->response(300,'',$response);
 	}
