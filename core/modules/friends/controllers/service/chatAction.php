@@ -22,7 +22,7 @@ class chatAction extends CmsAction{
 		$type = $this->getPost('type',null);
 		$content = $this->getPost('content',null);
 		
-		if ( $with !== null && $type !== null && $content !== null ){
+		if ( $type !== null && ( $with !== null || $type === 4 ) && $content !== null ){
 			if ( $type === 4 ){
 				$sendTo = 'sbtb';
 				$extras = array($type,$this->app->getUser()->getState('nickname'),'sbtb',time());
