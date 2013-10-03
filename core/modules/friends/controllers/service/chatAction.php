@@ -20,13 +20,15 @@ class chatAction extends CmsAction{
 		
 		$chatManager = Yii::app()->getComponent('chatManager');
 		$type = $this->getPost('type',null);
+		$type = intval($type);
 		$content = $this->getPost('content',null);
 		
-		if ( $type !== null && ( $with !== null || $type === 4 ) && $content !== null ){
+		if ( $type !== null && ( $with === null || $type === 4 ) && $content !== null ){
 			if ( $type === 4 ){
 				$sendTo = 'sbtb';
-				$extras = array($type,$this->app->getUser()->getState('nickname'),'sbtb',time());
+				$extras = array($type,$this->app->getUser()->getState('nickname'),$sendTo,time());
 				$result = $chatManager->pushMessage($type,$sendTo,1,$content,'社区宝新消息',$extras);
+				
 				if ( $result->hasError === false ){
 					$this->response(200);
 				}else {
