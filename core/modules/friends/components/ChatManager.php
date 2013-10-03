@@ -73,7 +73,7 @@ class ChatManager extends CApplicationComponent{
 			);
 		}
 		
-		$pusher->pushMulti($messages,1);
+		$pusher->pushMulti($messages,50);
 	}
 	
 	/**

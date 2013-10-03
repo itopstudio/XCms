@@ -251,6 +251,7 @@ class JPush extends PushBase{
 			$curl->setMethod('POST');
 			$curl->setRequestBody($this->_requestData);
 			$curl->curlBuildOpts();
+			
 			$this->_requestData = null;
 			$this->_requestData = array();
 		}

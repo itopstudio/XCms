@@ -124,10 +124,6 @@ class CurlBehavior extends CBehavior{
 	 * @param string $url
 	 */
 	public function curlInit($url=''){
-		if ( $this->_ch !== null ){
-			curl_close($this->_ch);
-			$this->_ch = null;
-		}
 		$this->_ch = curl_init();
 		if ( $url !== '' ){
 			$this->setUrl($url);
