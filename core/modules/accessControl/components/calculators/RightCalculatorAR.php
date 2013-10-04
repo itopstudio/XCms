@@ -204,4 +204,28 @@ class RightCalculatorAR extends RightCalculatorBase{
 		}
 		return $this->getFinalPermissions();
 	}
+	
+	/**
+	 * 
+	 * @param int $roleId
+	 * @return array
+	 */
+	public function findRolePermissions($roleId){
+		$role = AuthRoles::model()->with('AuthPermission')->findByPk($roleId);
+		$rolePermissions = array();
+		
+		if ( $role === null ){
+			return $rolePermissions;
+		}
+		
+		$separator = self::SEPARATOR_PREFIX_ROLE.$role->getPrimaryKey();
+		if ( isset($this->_data['rolePermissions'][$separator]) ){
+			$rolePermissions[$separator] = $this->_data['rolePermissions'][$separator];
+		}else {
+			$newRolePermissions = $role->AuthPermission;
+			$this->storeData('rolePermissions',$separator,$newRolePermissions);
+			$rolePermissions[$separator] = $newRolePermissions;
+		}
+		return $rolePermissions;
+	}
 }

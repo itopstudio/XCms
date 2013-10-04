@@ -27,7 +27,7 @@ class sayHelloAction extends CmsAction{
 				$chatManager = $this->app->getComponent('chatManager');
 				$chatManager->getPusher()->setTimeToLive(864000);
 				$alias = 'user'.$to;
-				$chatManager->pushNotification(1,$alias,1,'收到一条打招呼信息','社区宝聊天',array('time'=>time()));
+				$chatManager->pushNotification(1,$alias,1,'收到一条打招呼信息，请到好友中查看','社区宝聊天',array('time'=>time()));
 				$this->response(200,Yii::t('friends','say hello success'));
 			}else {
 				$this->response(201,'',$result->getErrors());

@@ -60,6 +60,14 @@ class CmsController extends CController{
 		);
 	}
 	
+	public function filterAccessControl($filterChain)
+	{
+		Yii::import('cms.modules.accessControl.components.AccessControlFilter',true);
+		$filter=new AccessControlFilter;
+		$filter->setRules($this->accessRules());
+		$filter->filter($filterChain);
+	}
+	
 	/**
 	 * @param string $name
 	 * @param mixed $defaultValue

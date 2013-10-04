@@ -197,4 +197,17 @@ class AuthAssigner extends CApplicationComponent{
 	public function checkConstraint($subject,$object){
 		return isset($this->_assignMap[$subject],$this->_assignMap[$subject][$object]);
 	}
+	
+	public function clear($subject,$from,$condition='',$params=array()){
+		if ( $this->checkConstraint($subject,$from) ){
+			$table = Yii::app()->db->getSchema()->getTable($this->_assignMap[$subject][$object]);
+			$sql = "DELETE FROM {$table->rawName}";
+			if ( $condition !== '' ){
+				$sql .= ' WHERE '.$condition;
+			}
+			Yii::app()->db->createCommand($sql)->execute(true,$params);
+		}else {
+			return false;
+		}
+	}
 }

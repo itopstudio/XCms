@@ -43,7 +43,7 @@ class UserOwnedChat extends CmsActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-				'room' => array(self::HAS_MANY,'ChatRoom','room_id')
+				'room' => array(self::BELONGS_TO,'ChatRoom','room_id')
 		);
 	}
 

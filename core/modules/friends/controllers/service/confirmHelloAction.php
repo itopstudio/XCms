@@ -23,7 +23,7 @@ class confirmHelloAction extends CmsAction{
 		$result = '';
 		if ( $type == 1 ){
 			$result = $userManager->makeFriends($loginedId,$helloId);
-			$message = '有用户和你成为朋友了';
+			$message = '你有了新的朋友，请到好友中查看';
 		}elseif ( $type == 2 ){
 			$result = $userManager->denyHello($loginedId,$helloId);
 		}
