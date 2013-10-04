@@ -137,6 +137,23 @@ class GroupManager extends CApplicationComponent{
 	}
 	
 	/**
+	 * 
+	 * @param int $uid
+	 * @param string $useRelate
+	 * @return UserOwnedChat[]
+	 */
+	public function getRooms($uid,$useRelate=true){
+		$criteria = new CDbCriteria();
+		if ( $useRelate === true ){
+			$criteria->with = array('room');
+		}
+		$criteria->condition = 'user_id=:uid';
+		$criteria->params = array(':uid'=>$uid);
+		
+		return UserOwnedChat::model()->findAll($criteria);
+	}
+	
+	/**
 	 *
 	 * @param int $uid
 	 * @param int $status
