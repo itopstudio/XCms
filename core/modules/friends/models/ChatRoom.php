@@ -32,10 +32,10 @@ class ChatRoom extends CmsActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('room_name, admin_num', 'required'),
+			array('room_name,community_id', 'required'),
 			array('user_num, admin_num', 'numerical', 'integerOnly'=>true),
 			array('room_name', 'length', 'max'=>15),
-			array('description', 'safe'),
+			array('description,admin_num', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, room_name, user_num, description, admin_num', 'safe', 'on'=>'search'),
