@@ -29,7 +29,13 @@ class applyForJoinGroupAction extends CmsAction{
 			$chatManager = $this->app->getComponent('chatManager');
 			$chatManager->getPusher()->setTimeToLive(864000);
 			$alias = 'user'.$group->master_id;
-			$chatManager->pushNotification(1,$alias,1,'有用户申请加群，请到聊天-更多中查看','社区宝聊天',array('time'=>time()));
+			
+			$extras[] = time();
+			$extras['ios'] = array(
+					'badge' => 1,
+					'sound' => 'happy'
+			);
+			$chatManager->pushNotification(1,$alias,1,'有用户申请加群，请到聊天-更多中查看','社区宝聊天',$extras);
 			
 			$this->response(200);
 		}else {

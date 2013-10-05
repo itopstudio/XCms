@@ -55,7 +55,12 @@ class chatAction extends CmsAction{
 				$content = $attributes['content'];
 				$extras = array($type,$loginedUid,$sendTo,$model->send_time);
 				
-				$result = $chatManager->pushMessage($type,$sendTo,$sendno,$content,'社区宝新消息',$extras);
+				$extras['ios'] = array(
+					'badge' => 1,
+					'sound' => 'happy'	
+				);
+				$result = $chatManager->pushNotification($type,$sendTo,$sendno,$content,'社区宝聊天',$extras);
+				//$result = $chatManager->pushMessage($type,$sendTo,$sendno,$content,'社区宝新消息',$extras);
 				
 				if ( $result->hasError === false ){
 					$this->response(200);

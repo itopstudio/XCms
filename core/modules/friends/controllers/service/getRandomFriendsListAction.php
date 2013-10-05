@@ -15,10 +15,11 @@ class getRandomFriendsListAction extends CmsAction{
 		$module = $this->getController()->getModule();
 		$listSize = $this->getQuery('size',10);
 		$userManager = $this->app->getComponent($module->userManagerId);
-		$with = array(
-				'select' => 'icon',
-				'with' => array(
+		$criteria = new CDbCriteria();
+		$criteria->select = 'icon';
+		$criteria->with = array(
 					'baseUser' => array(
+						'alias' => 'baseuser',
 						'select' => 'id,nickname',
 						'with' => array(
 							'trends' => array(
@@ -28,10 +29,10 @@ class getRandomFriendsListAction extends CmsAction{
 								'order' => 'publish_time DESC'
 							),
 						),
+						'join' => 'JOIN `xcms_user_interest` `ui` ON `ui`.`follower`!=`baseuser`.`id`',
 					),
-				),
 		);
-		$users = $userManager->getUserRandom($listSize,$with,$loginedId);
+		$users = $userManager->getUserRandom($listSize,$criteria,$loginedId);
 		
 		$data = array();
 		$attributeNames = array('id','nickname','icon');

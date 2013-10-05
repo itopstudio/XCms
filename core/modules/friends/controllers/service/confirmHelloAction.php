@@ -31,7 +31,13 @@ class confirmHelloAction extends CmsAction{
 		if ( !is_string($result) && $result->hasErrors() ){
 			if ( $type == 1 ){
 				$alias = 'user'.$result->followed;
-				$chatManager->pushNotification(1,$alias,1,$message,'社区宝聊天',array('time'=>time()));
+				
+				$extras[] = time();
+				$extras['ios'] = array(
+						'badge' => 1,
+						'sound' => 'happy'
+				);
+				$chatManager->pushNotification(1,$alias,1,$message,'社区宝聊天',$extras);
 			}
 			$this->response(200);
 		}else {
