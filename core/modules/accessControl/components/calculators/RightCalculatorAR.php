@@ -220,12 +220,53 @@ class RightCalculatorAR extends RightCalculatorBase{
 		
 		$separator = self::SEPARATOR_PREFIX_ROLE.$role->getPrimaryKey();
 		if ( isset($this->_data['rolePermissions'][$separator]) ){
-			$rolePermissions[$separator] = $this->_data['rolePermissions'][$separator];
+			$newRolePermissions = $this->_data['rolePermissions'][$separator];
 		}else {
 			$newRolePermissions = $role->AuthPermission;
 			$this->storeData('rolePermissions',$separator,$newRolePermissions);
-			$rolePermissions[$separator] = $newRolePermissions;
 		}
-		return $rolePermissions;
+		return $newRolePermissions;
+	}
+	
+	public function findGroupRoles($groupId){
+		$groupRoles = array();
+		$group = AuthGroups::model()->with('AuthRole')->findByPk($groupId);
+	
+		if ( $group === null ){
+			return $groupRoles;
+		}
+	
+		$separator = self::SEPARATOR_PREFIX_GROUP.$group->getPrimaryKey();
+		if ( isset($this->_data['groupRoles'][$separator]) ){
+			$groupRoles = $this->_data['groupRoles'][$separator];
+		}else {
+			$newGroupRoles = $group->AuthRole;
+			$groupRoles = $newGroupRoles;
+		}
+		return $groupRoles;
+	}
+	
+	public function findUserRoles($userId){
+		$user = UserModel::model()->with(array(
+				'AuthRoles'
+		))->findByPk($userId);
+		
+		if ( $user === null ){
+			return array();
+		}
+		
+		return $user->AuthRoles;
+	}
+	
+	public function findUserGroups($userId){
+		$user = UserModel::model()->with(array(
+				'AuthGroups'
+		))->findByPk($userId);
+		
+		if ( $user === null ){
+			return array();
+		}
+		
+		return $user->AuthGroups;
 	}
 }

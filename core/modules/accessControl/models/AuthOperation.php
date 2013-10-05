@@ -41,6 +41,7 @@ class AuthOperation extends LevelModel
 		// will receive user inputs.
 		return array(
 			array('operation_name, controller, action', 'required','message'=>'{attribute}不能为空'),
+			array('action','unionUnique','unionAttributes'=>array('module','controller'),'message'=>'该操作已存在'),
 			array('operation_name', 'length', 'max'=>20),
 			array('module, controller, action', 'length', 'max'=>30),
 			array('description,fid, level, lft, rgt,', 'safe'),

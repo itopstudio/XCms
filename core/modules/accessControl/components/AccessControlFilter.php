@@ -31,4 +31,18 @@ class AccessControlFilter extends CAccessControlFilter{
 	
 		return false;
 	}
+	
+	public function filter($filterChain){
+		if($this->preFilter($filterChain))
+		{
+			$filterChain->run();
+			$this->postFilter($filterChain);
+		}else {
+			if ( method_exists($filterChain->controller,'accessDenied') ){
+				call_user_func(array($filterChain->controller,'accessDenied'));
+			}else {
+				return false;
+			}
+		}
+	}
 }

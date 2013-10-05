@@ -170,7 +170,7 @@ class GroupManager extends CApplicationComponent{
 			);
 		}
 		$criteria->condition = 'group_id=:gid AND status=:s';
-		$criteria->params = array(':gid'=>$groupId,':s'=>$status);
+		$criteria->params = array(':gid'=>$groupId,':s'=>0);
 		
 		return UserOwnedGroup::model()->findAll($criteria);
 	}

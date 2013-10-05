@@ -29,29 +29,40 @@ class AuthMenu extends CApplicationComponent{
 			return array();
 		}
 		
-		$menu = array();
+		$menus = array();
+		$topMenuMap = array();
 		$user = Yii::app()->getUser();
 		foreach ( $topMenus as $topMenu ){
-			$childrenTree = $model->findChildrenInPreorder($topMenu);
+			$topMenuMap['n'.$topMenu->getPrimaryKey()] = $topMenu;
+			$childrenTree = array_values($model->findChildrenInPreorder($topMenu));
 			$count = count($childrenTree)-1;
-			while ( $count >= 0 ){
-				$opKey = 'op'.$childrenTree[$count]->getPrimaryKey();
-				$level = $childrenTree[$count]->getAttribute('level');
-				if ( $level > $deepth || !isset($opIds[$opKey]) ){
+			while ( $count > 0 ){
+				$record = $childrenTree[$count]['record'];
+				$opKey = 'op'.$record->getPrimaryKey();
+				$level = $record->getAttribute('level');
+				
+				$operation = array(
+						'module' => $record->getAttribute('module'),
+						'controller' => $record->getAttribute('controller'),
+						'action' => $record->getAttribute('action')
+				);
+				
+				if ( $level > $deepth ){
+					if ( isset($opIds[$opKey]) ){
+						$operationKey = $user->generateOperationKey($operation);
+						$user->cacheAccess($operationKey,true);
+					}
+					unset($childrenTree[$count]);
+				}elseif ( !isset($opIds[$opKey]) ){
 					unset($childrenTree[$count]);
 				}else {
-					$operation = array(
-							'module' => $childrenTree[$count]->getAttribute('module'),
-							'controller' => $childrenTree[$count]->getAttribute('controller'),
-							'action' => $childrenTree[$count]->getAttribute('action')
-					);
 					$operationKey = $user->generateOperationKey($operation);
 					$user->cacheAccess($operationKey,true);
 				}
-				++$count;
+				--$count;
 			}
-			$menu = array_merge($menu,$childrenTree);
+			$menus = array_merge($menus,$childrenTree);
 		}
-		return $menu;
+		return $menus;
 	}
 }

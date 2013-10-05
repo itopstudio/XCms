@@ -67,7 +67,7 @@ class UserModel extends SingleInheritanceModel
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nickname, password', 'required'),
+			array('nickname, password', 'required','message'=>'{attribute}不能为空.'),
 			array('last_login_time, last_login_ip', 'required', 'on'=>'update'),
 			array('locked', 'numerical', 'integerOnly'=>true),
 			array('nickname', 'length', 'max'=>20),
@@ -108,10 +108,9 @@ class UserModel extends SingleInheritanceModel
 	{
 		return array(
 			'id' => 'ID',
-			'nickname' => 'Nickname',
+			'nickname' => '昵称',
 			'realname' => 'Realname',
-			'email' => 'Email',
-			'password' => 'Password',
+			'password' => '密码',
 			'uuid' => 'Uuid',
 			'last_login_time' => 'Last Login Time',
 			'last_login_ip' => 'Last Login Ip',

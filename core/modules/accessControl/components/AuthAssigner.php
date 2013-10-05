@@ -200,12 +200,12 @@ class AuthAssigner extends CApplicationComponent{
 	
 	public function clear($subject,$from,$condition='',$params=array()){
 		if ( $this->checkConstraint($subject,$from) ){
-			$table = Yii::app()->db->getSchema()->getTable($this->_assignMap[$subject][$object]);
+			$table = Yii::app()->db->getSchema()->getTable($this->_assignMap[$subject][$from]);
 			$sql = "DELETE FROM {$table->rawName}";
 			if ( $condition !== '' ){
 				$sql .= ' WHERE '.$condition;
 			}
-			Yii::app()->db->createCommand($sql)->execute(true,$params);
+			Yii::app()->db->createCommand($sql)->execute($params);
 		}else {
 			return false;
 		}

@@ -205,4 +205,10 @@ abstract class RightCalculatorBase extends CComponent{
 		}
 		return $this->getFinalPermissions();
 	}
+	
+	
+	abstract public function findRolePermissions($roleId);
+	abstract public function findUserRoles($userId);
+	abstract public function findGroupRoles($groupId);
+	abstract public function findUserGroups($userId);
 }
