@@ -20,6 +20,7 @@ class addGroupAction extends CmsAction{
 		}
 		$groupManager = $this->getController()->getModule()->getGroupManager();
 		$result = $groupManager->createGroup($loginedId,$name,0,$description);
+		$groupManager->addMemberToGroup($result->primaryKey,$loginedId,0);
 		
 		if ( !$result->hasErrors() ){
 			$this->response(200);

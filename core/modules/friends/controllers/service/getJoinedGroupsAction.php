@@ -21,6 +21,7 @@ class getJoinedGroupsAction extends CmsAction{
 		
 		$groupManager = $this->getController()->getModule()->getGroupManager();
 		$list = $groupManager->getGroups($loginedId,0);
+		
 		$response = array();
 		foreach ( $list as $l ){
 			$group = $l->group;
