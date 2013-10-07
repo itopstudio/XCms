@@ -11,6 +11,6 @@ abstract class PushBase extends CApplicationComponent{
 	}
 	
 	private function generateVerification(){
-		throw Yii::t('friends','child class must impliment PushBase::generateVerification()');
+		throw new  Exception(Yii::t('friends','child class must impliment PushBase::generateVerification()'));
 	}
 }

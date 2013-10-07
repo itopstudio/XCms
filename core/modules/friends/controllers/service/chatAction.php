@@ -24,10 +24,15 @@ class chatAction extends CmsAction{
 		$content = $this->getPost('content',null);
 		
 		if ( $type !== null && ( $with !== null || $type === 4 ) && $content !== null ){
+			$extras['ios'] = array(
+					'badge' => 1,
+					'sound' => 'happy'
+			);
+			
 			if ( $type === 4 ){
 				$sendTo = 'sbtb';
 				$extras = array($type,$this->app->getUser()->getState('nickname'),$sendTo,time());
-				$result = $chatManager->pushMessage($type,$sendTo,1,$content,'社区宝新消息',$extras);
+				$result = $chatManager->pushNotification($type,$sendTo,1,$content,'社区宝新消息',$extras);
 				
 				if ( $result->hasError === false ){
 					$this->response(200);
@@ -55,10 +60,6 @@ class chatAction extends CmsAction{
 				$content = $attributes['content'];
 				$extras = array($type,$loginedUid,$sendTo,$model->send_time);
 				
-				$extras['ios'] = array(
-					'badge' => 1,
-					'sound' => 'happy'	
-				);
 				$result = $chatManager->pushNotification($type,$sendTo,$sendno,$content,'社区宝聊天',$extras);
 				//$result = $chatManager->pushMessage($type,$sendTo,$sendno,$content,'社区宝新消息',$extras);
 				
