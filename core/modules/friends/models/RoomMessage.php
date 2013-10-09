@@ -47,7 +47,7 @@ class RoomMessage extends CmsActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'sender0' => array(self::BELONGS_TO, 'User', 'sender'),
+			'sender' => array(self::BELONGS_TO, 'UserModel', 'sender'),
 			'receiveRoom' => array(self::BELONGS_TO, 'ChatRoom', 'receive_room'),
 			'chatPics' => array(self::HAS_MANY, 'ChatPic', 'msg_id'),
 			'xcmsUsers' => array(self::MANY_MANY, 'User', '{{offline_chat_message}}(msg_id, user_id)'),

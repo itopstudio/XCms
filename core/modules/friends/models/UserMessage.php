@@ -45,6 +45,7 @@ class UserMessage extends CmsActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'pics' => array(self::HAS_MANY, 'UserMessagePic', 'msg_id'),
+			'receiver' => array(self::BELONGS_TO,'UserModel','receiver')
 		);
 	}
 

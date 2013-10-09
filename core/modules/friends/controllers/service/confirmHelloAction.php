@@ -41,7 +41,12 @@ class confirmHelloAction extends CmsAction{
 			}
 			$this->response(200);
 		}else {
-			$this->response(201,$result->getErrors());
+			if ( is_object($result) )
+				$this->response(201,$result->getErrors());
+			elseif ( is_string($result) )
+				$this->response(201,$result);
+			else 
+				$this->response(201);
 		}
 	}
 }

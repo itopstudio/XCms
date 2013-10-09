@@ -153,17 +153,18 @@ class CmsController extends CController{
 	public function actions(){
 		$actions = $this->getActionClass();
 		$folderAlias = "{$this->actionClassPathAlias}.{$this->id}";
-	
+
+		$returnActions = array();
 		foreach( $actions as $name => $option ){
 			if ( is_array($option) ){
 				$option['class'] = "{$folderAlias}.{$option['class']}{$this->actionClassSubfix}";
-				$actions[$name] = $option;
+				$returnActions[$name] = $option;
 			}else{
-				$actions[$option] = "{$folderAlias}.{$option}{$this->actionClassSubfix}";
+				$returnActions[$option] = "{$folderAlias}.{$option}{$this->actionClassSubfix}";
 			}
 		}
-	
-		return $actions;
+		
+		return $returnActions;
 	}
 	
 	/**
