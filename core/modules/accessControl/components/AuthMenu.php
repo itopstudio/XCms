@@ -65,11 +65,11 @@ class AuthMenu extends CApplicationComponent{
 			$menus = array_merge($menus,$childrenTree);
 		}
 		
-		foreach ( $topMenuChildrenMap as $count => $value ){
-			if ( $value === false ){
-				unset($menus[$count]);
-			}
-		}
+// 		foreach ( $topMenuChildrenMap as $count => $value ){
+// 			if ( $value === false ){
+// 				unset($menus[$count]);
+// 			}
+// 		}
 		
 		return $menus;
 	}
