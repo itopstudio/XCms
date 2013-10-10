@@ -39,6 +39,10 @@ class FriendsModule extends CmsModule{
 		return Yii::app()->getComponent('groupManager');
 	}
 	
+	public function getChatManager(){
+		return Yii::app()->getComponent('chatManager');
+	}
+	
 	public static function loadSelfModels(){
 		Yii::import('cms.modules.friends.models.*');
 	}
