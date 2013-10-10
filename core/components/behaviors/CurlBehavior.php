@@ -251,6 +251,22 @@ class CurlBehavior extends CBehavior{
 		$this->_errno = curl_errno($this->_ch);
 	}
 	
+	public function reset($disableHandler=false){
+		$this->_enableSsl = false;
+		$this->_url = '';
+		$this->_method = '';
+		$this->_header = array();
+		$this->_requestBody = '';
+		$this->_urlParams = '';
+		$this->_output = '';
+		$this->_returnTransfer = false;
+		$this->_error = '';
+		$this->_errno = 0;
+		if ( $disableHandler === true ){
+			$this->_ch = null;
+		}
+	}
+	
 	/**
 	 * 
 	 * @return array
@@ -277,6 +293,7 @@ class CurlBehavior extends CBehavior{
 	 */
 	public function getCurlHandler($refresh=false){
 		if ( $refresh === true || $this->_ch === null ){
+			$this->reset();
 			$this->curlInit();
 		}
 		return $this->_ch;
