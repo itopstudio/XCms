@@ -72,7 +72,8 @@ class UserModel extends SingleInheritanceModel
 			array('locked', 'numerical', 'integerOnly'=>true),
 			array('nickname', 'length', 'max'=>20),
 			array('realname', 'length', 'max'=>5),
-			array('password', 'length', 'max'=>16,'min'=>6,'message'=>'密码需要大于6位小于16位'),
+			array('password', 'length', 'max'=>16,'min'=>6,'tooShort'=>'密码需要大于6位小于16位','tooLong'=>'密码需要大于6位小于16位','message'=>'密码需要大于6位小于16位'),
+			array('password','length','is'=>60,'on'=>'update'),
 			array('last_login_time', 'length', 'max'=>11),
 			array('last_login_ip', 'length', 'max'=>15),
 			array('uuid','safe'),
@@ -104,7 +105,7 @@ class UserModel extends SingleInheritanceModel
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
-	public function attributeLabels()
+	public function labels()
 	{
 		return array(
 			'id' => 'ID',

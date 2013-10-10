@@ -200,10 +200,7 @@ abstract class SingleInheritanceModel extends CmsActiveRecord{
 		if ( $this->_setParentBeforeGet !== null ){//parent's attribute has set.so needs to be validated
 			$parent = $this->getParentInUse();
 			if ( $parent !== null ){
-				$parentValidated = $parent->validate($attributes,$clearErrors);
-				if ( $parentValidated === false ){
-					return false;
-				}
+				$parent->validate($attributes,$clearErrors);
 			}
 		}
 		return parent::validate($attributes,$clearErrors);
@@ -275,6 +272,30 @@ abstract class SingleInheritanceModel extends CmsActiveRecord{
 			}
 		}
 		return parent::update($attributes);
+	}
+	
+	public function getSafeAttributeNames(){
+		$parentNames = array();
+		$selfNames = parent::getSafeAttributeNames();
+		$parent = $this->getParentInUse();
+		if ( $parent !== null ){
+			$parentNames = $parent->getSafeAttributeNames();
+		}
+		return array_merge($parentNames,$selfNames);
+	}
+	
+	public function labels(){
+		return array();
+	}
+	
+	public function attributeLabels(){
+		$parentLabels = array();
+		$selfLabels = $this->labels();
+		$parent = $this->getParentInUse();
+		if ( $parent !== null && $parent instanceof SingleInheritanceModel ){
+			$parentLabels = $parent->labels();
+		}
+		return array_merge($parentLabels,$selfLabels);
 	}
 	
 	/**
