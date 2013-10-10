@@ -33,9 +33,10 @@ class AuthMenu extends CApplicationComponent{
 		$topMenuChildrenMap = array();
 		$user = Yii::app()->getUser();
 		foreach ( $topMenus as $topCount => $topMenu ){
-			$topMenuChildrenMap[$topCount] = false;
 			$childrenTree = array_values($model->findChildrenInPreorder($topMenu));
 			$count = count($childrenTree)-1;
+			$topMenuPos = count($menus);
+			$topMenuChildrenMap[$topCount] = $topMenuPos;
 			while ( $count > 0 ){
 				$record = $childrenTree[$count]['record'];
 				$opKey = 'op'.$record->getPrimaryKey();
@@ -65,11 +66,11 @@ class AuthMenu extends CApplicationComponent{
 			$menus = array_merge($menus,$childrenTree);
 		}
 		
-// 		foreach ( $topMenuChildrenMap as $count => $value ){
-// 			if ( $value === false ){
-// 				unset($menus[$count]);
-// 			}
-// 		}
+		foreach ( $topMenuChildrenMap as $count => $value ){
+			if ( $value !== true ){
+				unset($menus[$value]);
+			}
+		}
 		
 		return $menus;
 	}
