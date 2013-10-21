@@ -20,14 +20,14 @@ class RightCalculatorAR extends RightCalculatorBase{
 				'AuthPermissions',
 				'AuthGroups' => array(
 						'with' => array(
-								'AuthRole'=>array(
+								'AuthRole'/*=>array(
 										'alias' => 'role',
 										'with'=>array(
 												'AuthPermission' => array(
 														'alias' => 'permission'
 												)
 										)
-								),
+								),*/
 						)
 				),
 				'AuthRoles' => array('with'=>'AuthPermission')

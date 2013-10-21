@@ -71,7 +71,7 @@ class AuthMenu extends CApplicationComponent{
 				unset($menus[$value]);
 			}
 		}
-		echo memory_get_usage();die;
+		
 		return $menus;
 	}
 }
