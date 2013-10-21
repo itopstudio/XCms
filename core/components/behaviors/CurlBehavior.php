@@ -305,7 +305,7 @@ class CurlBehavior extends CBehavior{
 	 */
 	public function getError(){
 		return array(
-				'errno' => $this->_errorno,
+				'errno' => $this->_errno,
 				'error' => $this->_error
 		);
 	}
