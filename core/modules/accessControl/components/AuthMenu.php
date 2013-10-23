@@ -47,7 +47,6 @@ class AuthMenu extends CApplicationComponent{
 						'controller' => $record->getAttribute('controller'),
 						'action' => $record->getAttribute('action')
 				);
-				
 				if ( $level > $deepth ){
 					if ( isset($opIds[$opKey]) ){
 						$operationKey = $user->generateOperationKey($operation);
@@ -63,6 +62,7 @@ class AuthMenu extends CApplicationComponent{
 				}
 				--$count;
 			}
+			
 			$menus = array_merge($menus,$childrenTree);
 		}
 		
