@@ -16,7 +16,7 @@ class CmsSecurity extends CSecurityManager{
 	 * @param int $salt
 	 * @return string
 	 */
-	public function generate($inputPassword,$cost = 15){
+	public function generatePassword($inputPassword,$cost = 11){
 		return CPasswordHelper::hashPassword($inputPassword,$cost);
 	}
 	
@@ -26,16 +26,17 @@ class CmsSecurity extends CSecurityManager{
 	 * @param string $storedPassword
 	 * @return boolean
 	 */
-	public function verify($inputPassword,$storedPassword){
+	public function verifyPassword($inputPassword,$storedPassword){
 		return CPasswordHelper::verifyPassword($inputPassword,$storedPassword);
 	}
 	
 	/**
 	 * generate a uuid
 	 * @param array $rawData
+	 * @param int saltCost
 	 * @return string
 	 */
-	public function generateUUID($rawData){
+	public function generateUUID($rawData,$saltCost=10){
 		if ( is_string($rawData) ){
 			$rawData = array($rawData);
 		}
@@ -44,7 +45,7 @@ class CmsSecurity extends CSecurityManager{
 		foreach ( $rawData as $data ){
 			$string .= is_string($data) ? $data : strval($data);
 		}
-		$string .= $this->uuidSalt === '' ? $this->generateRandomString(10) : $this->uuidSalt;
+		$string .= $this->uuidSalt === '' ? $this->generateRandomString($saltCost) : $this->uuidSalt;
 		
 		$rawUuid = md5($string);
 		$uuidBody = array();

@@ -4,7 +4,7 @@
  * Date 2013-8-30
  * Encoding GBK 
  */
-abstract class SingleInheritanceModel extends CmsActiveRecord{
+abstract class SingleInheritance extends CmsActiveRecord{
 	/**
 	 * @var string parent relation defined in {@link CActiveRecord::relations()}
 	 * null if this model does not have a parent
@@ -21,6 +21,8 @@ abstract class SingleInheritanceModel extends CmsActiveRecord{
 	 */
 	public function __call($name, $parameters){
 		try {
+			'memcached -d -p 11211 -c 1024 -u root -m 256';
+			'varnishd -f /server/etc/varnish.vcl -s malloc,256M -T 127.0.0.1:8888 -a 0.0.0.0:80 -P /server/run/varnish.pid';
 			return parent::__call($name,$parameters);
 		}catch ( Exception $selfE ){
 			$parent = $this->getParentInUse();
