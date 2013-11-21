@@ -7,6 +7,10 @@
  * Encoding UTF-8
  */
 class CmsActiveRecord extends CActiveRecord{
+	public function hasAttribute($name,$checkProperty=true){
+		return ( $checkProperty===true && property_exists($this,$name) ) | parent::hasAttribute($name);
+	}
+	
 	public function findByPk($pk,$condition='',$params=array()){
 		if ( empty($pk) ){
 			return null;
@@ -27,7 +31,6 @@ class CmsActiveRecord extends CActiveRecord{
 		if ( $transaction === null ){
 			$transaction = $connection->beginTransaction();
 		}
-		
 		return $transaction;
 	}
 	

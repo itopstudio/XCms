@@ -1,8 +1,9 @@
 <?php
 /**
- * @author lancelot <cja.china@gmail.com>
- * Date 2013-8-30
- * Encoding GBK 
+ * @name SingleInheritance.php
+ * @author lancelot <lancelot1215@gmail.com>
+ * Date 2013-11-21 
+ * Encoding UTF-8
  */
 abstract class SingleInheritance extends CmsActiveRecord{
 	/**
@@ -11,49 +12,40 @@ abstract class SingleInheritance extends CmsActiveRecord{
 	 */
 	protected $_parentRelation = null;
 	/**
-	 * @var CActiveRecord when parent's attribute(s) is set before get
-	 * this record will be created as a new ActiveRecord
+	 * 
+	 * @var CActiveRecord
 	 */
-	private $_setParentBeforeGet = null;
+	protected $_parentNewRecord = null;
+	/**
+	 * 
+	 * @var array
+	 */
+	protected  static $_factoryMap = array();
 	
 	/**
-	 * @see CActiveRecord::__call()
+	 * 
+	 * @return array
 	 */
-	public function __call($name, $parameters){
-		try {
-			'memcached -d -p 11211 -c 1024 -u root -m 256';
-			'varnishd -f /server/etc/varnish.vcl -s malloc,256M -T 127.0.0.1:8888 -a 0.0.0.0:80 -P /server/run/varnish.pid';
-			return parent::__call($name,$parameters);
-		}catch ( Exception $selfE ){
-			$parent = $this->getParentInUse();
-			if ( $parent !== null ){
-				if ( method_exists($parent,$name) ){
-					return call_user_func_array(array($parent,$name),$parameters);
-				}else {
-					try {
-						return $parent->__call($name,$parameters);
-					}catch ( Exception $e ){
-					}
-				}
-			}
-			throw $selfE;
+	public function __sleep(){
+		$keys = parent::__sleep();
+		$parent = $this->parentFactory(__FUNCTION__);
+		if ( $parent !== null ){
+			$keys = array_merge($keys,$parent->__sleep());
 		}
+		return $keys;
 	}
 	
 	/**
-	 * get parent's attribute.you can access this attribute like a property
-	 * @param string $name
+	 * 
+	 * @see CActiveRecord::__get()
 	 */
 	public function __get($name){
 		try {
 			$result = parent::__get($name);
 		}catch ( CException $e ){
-			$parent = $this->getParentInUse();
+			$parent = $this->parentFactory(__FUNCTION__);
 			if ( $parent !== null ){
 				$result = $parent->__get($name);
-				if ( $result === null && $this->_setParentBeforeGet !== null ){
-					$result = $this->getParentInUse(true)->__get($name);
-				}
 			}else {
 				throw $e;
 			}
@@ -63,12 +55,12 @@ abstract class SingleInheritance extends CmsActiveRecord{
 	}
 	
 	/**
-	 * if this record has parent,set the attribute to parent record
-	 * @see CActiveRecord::__set()
+	 * 
+	 *  @see CActiveRecord::__set()
 	 */
-	public function __set($name,$value){
+	public function __set($name, $value){
 		$hasSetInParent = false;
-		$parent = $this->getParentInUse();
+		$parent = $this->parentFactory(__FUNCTION__);
 		if ( $parent !== null ){
 			try {
 				$parent->__set($name,$value);
@@ -76,6 +68,7 @@ abstract class SingleInheritance extends CmsActiveRecord{
 			}catch ( CException $e ){
 			}
 		}
+		
 		try {
 			parent::__set($name,$value);
 		}catch ( CException $e ){
@@ -83,15 +76,15 @@ abstract class SingleInheritance extends CmsActiveRecord{
 				throw $e;
 			}
 		}
-		
 	}
 	
 	/**
+	 * 
 	 * @see CActiveRecord::__isset()
 	 */
 	public function __isset($name){
 		if ( parent::__isset($name) === false ){
-			$parent = $this->getParentInUse(true);
+			$parent = $this->parentFactory(__FUNCTION__);
 			if ( $parent !== null ){
 				return $parent->__isset($name);
 			}
@@ -102,121 +95,71 @@ abstract class SingleInheritance extends CmsActiveRecord{
 	}
 	
 	/**
+	 * 
 	 * @see CActiveRecord::__unset()
 	 */
 	public function __unset($name){
-		parent::__unset($name);
-		$parent = $this->getParentInUse(true);
-		if ( $parent !== null ){
-			$parent->__unset($name);
-		}
-	}
-	
-	/**
-	 * @see CActiveRecord::attributeNames()
-	 */
-	public function attributeNames(){
-		$selfAttributeNames = parent::attributeNames();
-		$parentAttributeNames = array();
-		
-		$parent = $this->getParentInUse();
-		if ( $parent !== null ){
-			$parentAttributeNames = $parent->attributeNames();
-		}
-		return array_merge($selfAttributeNames,$parentAttributeNames);
-	}
-	
-	/**
-	 * @see CActiveRecord::hasAttribute()
-	 */
-	public function hasAttribute($name){
-		if ( parent::hasAttribute($name) === false ){
-			$parent = $this->getParentInUse();
+		try {
+			parent::__unset($name);
+		}catch ( CException $e ){
+			$parent = $this->parentFactory(__FUNCTION__);
 			if ( $parent !== null ){
-				return $parent->hasAttribute($name);
+				$parent->__unset($name);
+			}else {
+				throw $e;
 			}
 		}
-		return true;
 	}
 	
 	/**
-	 * @see CActiveRecord::getAttribute()
+	 * 
+	 * @see CActiveRecord::__call()
 	 */
-	public function getAttribute($name){
-		$attribute = parent::getAttribute($name);
-		if ( $attribute === null ){
-			$parent = $this->getParentInUse();
+	public function __call($name, $parameters){
+		try {
+			return parent::__call($name, $parameters);
+		}catch ( CException $se ){
+			$parent = $this->parentFactory(__FUNCTION__);
 			if ( $parent !== null ){
-				$attribute = $parent->getAttribute($name);
-				if ( $attribute === null && $this->_setParentBeforeGet !== null ){
-					$attribute = $this->getParentInUse(true)->getAttribute($name);
+				if ( method_exists($parent,$name) ){
+					return call_user_func_array(array($parent,$name),$parameters);
+				}else {
+					try {
+						return $parent->__call($name,$parameters);
+					}catch ( CException $pe ){
+					}
 				}
 			}
+			
+			throw $se;
 		}
-		return $attribute;
 	}
 	
 	/**
-	 * @see CActiveRecord::setAttribute()
+	 * 
+	 * @see CActiveRecord::getRelated()
 	 */
-	public function setAttribute($name,$value){
-		$parent = $this->getParentInUse();
-		if ( $parent !== null ){
-				$parent->setAttribute($name,$value);
+	public function getRelated($name,$refresh=false,$params=array()){
+		$related = parent::getRelated($name,$refresh,$params);
+		if ( $related === null ){
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				$related = $parent->getRelated($name,$refresh,$params);
+			}
 		}
-		return parent::setAttribute($name,$value);
-	}
-	
-	/**
-	 * @see CActiveRecord::getAttributes()
-	 */
-	public function getAttributes($names=true){
-		$selfAttributes = parent::getAttributes($names);
 		
-		$parent = $this->getParentInUse(true);
-		if ( $parent !== null ){
-			foreach ( $parent->getAttributes($names) as $name => $value ){
-				if ( !isset($selfAttributes[$name]) ){
-					$selfAttributes[$name] = $value;
-				}
-			}
-		}
-		return $selfAttributes;
+		return $related;
 	}
 	
 	/**
-	 * @see CModel::setAttributes()
+	 * 
+	 * @see CActiveRecord::hasRelated()
 	 */
-	public function setAttributes($values,$safeOnly=true){
-		parent::setAttributes($values,$safeOnly);
-		$parent = $this->getParentInUse();
-		if ( $parent !== null ){
-			$parent->setAttributes($values,$safeOnly);
-		}
-	}
-	
-	/**
-	 * @see CModel::validate()
-	 */
-	public function validate($attributes=null,$clearErrors=true){
-		if ( $this->_setParentBeforeGet !== null ){//parent's attribute has set.so needs to be validated
-			$parent = $this->getParentInUse();
+	public function hasRelated($name){
+		if ( parent::hasRelated($name) === false ){
+			$parent = $this->parentFactory(__FUNCTION__);
 			if ( $parent !== null ){
-				$parent->validate($attributes,$clearErrors);
-			}
-		}
-		return parent::validate($attributes,$clearErrors);
-	}
-	
-	/**
-	 * @see CModel::hasErrors()
-	 */
-	public function hasErrors($attribute=null){
-		if ( parent::hasErrors($attribute) === false ){
-			$parent = $this->getParentInUse();
-			if ( $parent !== null ){
-				$hasError = $parent->hasErrors($attribute);
-				return $hasError;
+				return $parent->hasRelated($name);
 			}else {
 				return false;
 			}
@@ -226,15 +169,161 @@ abstract class SingleInheritance extends CmsActiveRecord{
 	}
 	
 	/**
+	 * 
+	 * @see CActiveRecord::attributeNames()
+	 */
+	public function attributeNames(){
+		$selfAttributeNames = parent::attributeNames();
+		$parentAttributeNames = array();
+		$parent = $this->parentFactory(__FUNCTION__);
+		
+		if ( $parent !== null ){
+			$parentAttributeNames = $parent->attributeNames();
+		}
+		
+		return array_merge($parentAttributeNames,$selfAttributeNames);
+	}
+	
+	/**
+	 * 
+	 * @see CActiveRecord::getActiveRelation()
+	 */
+	public function getActiveRelation($name){
+		$activeRelation = parent::getActiveRelation($name);
+		if ( $activeRelation === null ){
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				return $parent->getActiveRelation($name);
+			}else {
+				return null;
+			}
+		}else {
+			return $activeRelation;
+		}
+	}
+	
+	/**
+	 * 
+	 * @see CmsActiveRecord::hasAttribute()
+	 */
+	public function hasAttribute($name,$checkProperty=true){
+		$has = parent::hasAttribute($name,$checkProperty);
+		if ( $has === false ){
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				return $parent->hasAttribute($name,$checkProperty);
+			}else {
+				return false;
+			}
+		}else {
+			return true;
+		}
+	}
+	
+	/**
+	 * 
+	 * @see CActiveRecord::getAttribute()
+	 */
+	public function getAttribute($name){
+		$attribute = parent::getAttribute($name);
+		if ( $attribute === null ){
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				$attribute = $parent->getAttribute($name);
+			}
+		}
+		
+		return $attribute;
+	}
+	
+	/**
+	 * 
+	 * @see CActiveRecord::setAttribute()
+	 */
+	public function setAttribute($name, $value){
+		$set = parent::setAttribute($name,$value);
+		if ( $set === false ){
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				$set = $parent->setAttribute($name,$value);
+			}
+		}
+		
+		return $set;
+	}
+	
+	/**
+	 * 
+	 * @see CActiveRecord::getAttributes()
+	 */
+	public function getAttributes($names=true){
+		$selfAttributes = parent::getAttributes($names);
+		
+		$parent = $this->parentFactory(__FUNCTION__);
+		if ( $parent !== null ){
+			foreach ( $parent->getAttributes($names) as $name => $value ){
+				if ( !isset($selfAttributes[$name]) ){
+					$selfAttributes[$name] = $value;
+				}
+			}
+		}
+		
+		return $selfAttributes;
+	}
+	
+	/**
+	 * @see CModel::setAttributes()
+	 */
+	public function setAttributes($values,$safeOnly=true){
+		parent::setAttributes($values,$safeOnly);
+		$parent = $this->parentFactory(__FUNCTION__);
+		if ( $parent !== null ){
+			$parent->setAttributes($values,$safeOnly);
+		}
+	}
+	
+	/**
+	 * 
+	 * @see CModel::validate()
+	 */
+	public function validate($attributes=null,$clearErrors=true){
+		if ( $this->getIsNewRecord() === false && $this->hasParentRelated() === false ){//edit sub class only
+			return parent::validate($attributes,$clearErrors);
+		}
+		
+		$parent = $this->parentFactory(__FUNCTION__);
+		if ( $parent !== null ){
+			return $parent->validate($attributes,$clearErrors) && parent::validate($attributes,$clearErrors);
+		}else {
+			return true;
+		}
+	}
+	
+	/**
+	 * 
+	 * @see CModel::hasErrors()
+	 */
+	public function hasErrors($attribute=null){
+		if ( parent::hasErrors($attribute) === false ){
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				return $parent->hasErrors($attribute);
+			}
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	/**
+	 * 
 	 * @see CModel::getErrors()
 	 */
 	public function getErrors($attribute=null){
 		$errors = parent::getErrors($attribute);
-		if ( empty($errors) ){
-			$parent = $this->getParentInUse();
-			if ( $parent !== null ){
-				$errors = array_merge($errors,$parent->getErrors($attribute));
-			}
+		$parent = $this->parentFactory(__FUNCTION__);
+		if ( $parent !== null ){
+			$errors = array_merge($parent->getErrors($attribute),$errors);
 		}
 		return $errors;
 	}
@@ -245,7 +334,7 @@ abstract class SingleInheritance extends CmsActiveRecord{
 	public function getError($attribute){
 		$error = parent::getError($attribute);
 		if ( $error === null ){
-			$parent = $this->getParentInUse();
+			$parent = $this->parentFactory(__FUNCTION__);
 			if ( $parent !== null ){
 				$error = $parent->getError($attribute);
 			}
@@ -253,85 +342,125 @@ abstract class SingleInheritance extends CmsActiveRecord{
 		return $error;
 	}
 	
+	/**
+	 * 
+	 * @see CActiveRecord::insert()
+	 */
 	public function insert($attributes=null){
-		$parent = $this->getParentInUse(true);
-		if ( $parent !== null ){
-			if ( $parent->insert($attributes) ){
+		$insert = false;
+		try {
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null && $parent->insert($attributes) ){
 				$insertId = $this->getDbConnection()->getLastInsertID();
 				$foreignKey = $this->getMetaData()->relations[$this->_parentRelation]->foreignKey;
 				parent::setAttribute($foreignKey,$insertId);
 			}
+			$insert = parent::insert($attributes);
+		}catch ( CException $e ){
+			throw $e;
 		}
-		return parent::insert($attributes);
-	}
-	
-	public function update($attributes=null){
-		$parent = $this->getParentInUse();
-		if ( $parent !== null ){
-			try {
-				$parent->update($attributes);
-			}catch( CException $e ){
-			}
-		}
-		return parent::update($attributes);
-	}
-	
-	public function getSafeAttributeNames(){
-		$parentNames = array();
-		$selfNames = parent::getSafeAttributeNames();
-		$parent = $this->getParentInUse();
-		if ( $parent !== null ){
-			$parentNames = $parent->getSafeAttributeNames();
-		}
-		return array_merge($parentNames,$selfNames);
-	}
-	
-	public function labels(){
-		return array();
-	}
-	
-	public function attributeLabels(){
-		$parentLabels = array();
-		$selfLabels = $this->labels();
-		$parent = $this->getParentInUse();
-		if ( $parent !== null && $parent instanceof SingleInheritanceModel ){
-			$parentLabels = $parent->labels();
-		}
-		return array_merge($parentLabels,$selfLabels);
+		return $insert;
 	}
 	
 	/**
-	 * get the using parent.this parent can be used util save
-	 * @return CActiveRecord.Null if parentRelation is null
+	 * 
+	 * @see CActiveRecord::update()
 	 */
-	protected function getParentInUse($useRelated=false){
-		$parent = null;
-		if ( $this->_parentRelation !== null ){
-			if ( $this->hasRelated($this->_parentRelation) === false && $this->_setParentBeforeGet === null ){
-				$relationClass = $this->getMetaData()->relations[$this->_parentRelation]->className;
-				$parent = new $relationClass;
-				$this->_setParentBeforeGet = $parent;
-			}elseif ( !$useRelated && $this->_setParentBeforeGet !== null ){
-				$parent = $this->_setParentBeforeGet;
-			}elseif ( $useRelated && $this->_setParentBeforeGet !== null ){
-				$parent = $this->getRelated($this->_parentRelation);
-				if ( $parent === null ){
-					$parent = $this->_setParentBeforeGet;
-				}else {
-					$parentAttributes = $parent->getAttributes();
-					$attributes = $this->_setParentBeforeGet->getAttributes();
-					foreach ( $attributes as $name => $value ){
-						if ( $value !== null ){
-							$parentAttributes[$name] = $value;
-						}
-					}
-					$parent->setAttributes($parentAttributes);
-					$this->_setParentBeforeGet = null;
-				}
+	public function update($attributes=null){
+		$update = false;
+		try {
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				$parent->update($attributes);
+			}
+			$update = parent::update($attributes);
+		}catch ( CException $e ){
+			throw $e;
+		}
+		return $update;
+	}
+	
+	/**
+	 * 
+	 * @see CActiveRecord::saveAttributes()
+	 */
+	public function saveAttributes($attributes){
+		$result = false;
+		try {
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent !== null ){
+				$parent->saveAttributes($attributes);
+			}
+			$result = parent::saveAttributes($attributes);
+		}catch ( CException $e ){
+			throw $e;
+		}
+		return $reuslt;
+	}
+	
+	/**
+	 * 
+	 * @see CActiveRecord::delete()
+	 */
+	public function delete($deleteParent=true){
+		if ( $deleteParent === true ){
+			$parent = $this->parentFactory(__FUNCTION__);
+			if ( $parent === null ){
+				throw new CException(YIi::t('models/singleInheritance','record can not be deleted.can not find base record'));
 			}else {
-				$parent = $this->getRelated($this->_parentRelation);
+				return $parent->delete();
+			}
+		}else {
+			return parent::delete();
+		}
+	}
+	
+	/**
+	 * 
+	 * @see CActiveRecord::refresh()
+	 */
+	public function refresh(){
+		$parent = $this->parentFactory(__FUNCTION__);
+		if ( $parent !== null ){
+			if ( $parent->refresh() ){
+				return parent::refresh();
 			}
 		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param string $from
+	 * @param string $refresh
+	 * @param array $params
+	 * @return CActiveRecord
+	 */
+	protected function parentFactory($from,$refresh=false,$params=array()){
+		$parent = null;
+		
+		if ( $this->_parentRelation !== null && $this->getIsNewRecord() === true ){
+			if ( $this->_parentNewRecord === null ){
+				$relationClass = $this->getMetaData()->relations[$this->_parentRelation]->className;
+				$this->_parentNewRecord = new $relationClass;
+			}
+			$parent = $this->_parentNewRecord;
+		}elseif ( $this->_parentRelation !== null ){
+			$parent = parent::getRelated($this->_parentRelation,$refresh,$params);
+		}
+		
 		return $parent;
+	}
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	protected function hasParentRelated(){
+		if ( $this->_parentRelation !== null ){
+			return parent::hasRelated($this->_parentRelation);
+		}else {
+			return false;
+		}
 	}
 }

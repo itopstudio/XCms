@@ -54,7 +54,6 @@ class User extends SingleInheritance
 					'tooShort'=>$passwordMessage,
 					'tooLong'=>$passwordMessage,
 					'message'=>$passwordMessage,
-					
 			),
 			array('uuid,locked,user_type,last_login_time,last_login_ip','safe')
 		);
@@ -105,19 +104,19 @@ class User extends SingleInheritance
 		if ( $isNewRecord ){
 			$this->setPassword($this->getAttribute('password'));
 		}
-
+		
 		if ( $isNewRecord || $this->_changeUUID === true ){
 			$uuidRawData = $this->getAttributes($this->_uuidDependence);
 			$uuid = Yii::app()->getSecurityManager()->generateUUID($uuidRawData);
 			$this->setAttribute('uuid',$uuid);
 		}
-
+		
 		return parent::beforeSave();
 	}
 	
 	public function setPassword($password,$cost=11){
 		$security = Yii::app()->getSecurityManager();
 		$this->_changeUUID = true;
-		$this->setAttribute('password',$security->generatePassword($newPassword,$cost));
+		$this->setAttribute('password',$security->generatePassword($password,$cost));
 	}
 }
