@@ -56,7 +56,7 @@ class AuthUser extends CWebUser{
 	
 	public function beforeLogin($id, $states, $fromCookie){
 		if ( $fromCookie === true ){
-			if ( UserModel::model()->count("uuid='{$states['uuid']}'") !== 1 ){
+			if ( User::model()->count("uuid='{$states['uuid']}'") != 1 ){
 				return false;
 			}
 		}

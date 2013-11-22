@@ -86,9 +86,6 @@ class ConfigBase{
 			'preloadModels' => array(),
 				
 			'components'=>array(
-				'user'=>array(
-					'class' => 'cms.modules.accessControl.components.AuthUser'
-				),
 		
 				'authManager' => array(
 					'class' => 'cms.modules.accessControl.components.AuthManager'
@@ -103,7 +100,6 @@ class ConfigBase{
 // 				),
 			),
 			'params' => array(
-				'frontUserStateKeyPrefix' => 'FrontU'
 			)
 			
 		);
