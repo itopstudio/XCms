@@ -7,6 +7,7 @@
  * Encoding UTF-8
  */
 class CmsActiveRecord extends CActiveRecord{
+	
 	public function hasAttribute($name,$checkProperty=true){
 		return ( $checkProperty===true && property_exists($this,$name) ) | parent::hasAttribute($name);
 	}

@@ -6,6 +6,7 @@
  */
 class AuthUser extends CWebUser{
 	private $_access = array();
+	public $accessCacheTimeout = 3600;
 	
 	/**
 	 * check operation access
@@ -35,7 +36,7 @@ class AuthUser extends CWebUser{
 	 * @return string
 	 */
 	public function generateOperationKey(&$operation){
-		return md5(json_encode($operation));
+		return 'AuthUser_Access_Cache_'.json_encode($operation);
 	}
 	
 	/**
@@ -43,7 +44,12 @@ class AuthUser extends CWebUser{
 	 * @return boolean
 	 */
 	public function getCachedAccess($key){
-		return Yii::app()->session->itemAt($key);
+		$cache = Yii::app()->getCache();
+		if ( $cache !== null ){
+			return $cache->get($key);
+		}else {
+			return Yii::app()->session->itemAt($key);
+		}
 	}
 	
 	/**
@@ -51,10 +57,15 @@ class AuthUser extends CWebUser{
 	 * @param boolean $data
 	 */
 	public function cacheAccess($key,$data){
-		Yii::app()->session->add($key,$data);
+		$cache = Yii::app()->getCache();
+		if ( $cache !== null ){
+			$cache->set($key,$data,$this->accessCacheTimeout);
+		}else {
+			Yii::app()->session->add($key,$data);
+		}
 	}
 	
-	public function beforeLogin($id, $states, $fromCookie){
+	protected function beforeLogin($id, $states, $fromCookie){
 		if ( $fromCookie === true ){
 			if ( User::model()->count("uuid='{$states['uuid']}'") != 1 ){
 				return false;

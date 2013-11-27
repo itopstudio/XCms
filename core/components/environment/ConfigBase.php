@@ -75,6 +75,9 @@ class ConfigBase{
 				'cms.models.*',
 				'cms.widgets.*',
 				'cms.globals.*',
+				
+				//import from access control module
+				'cms.modules.accessControl.components.*'
 			),
 				
 			'modules' => array(
