@@ -1,6 +1,6 @@
 <?php
 class uploadifyWidget extends CInputWidget {
-    protected $mult;
+    public $mult;
 
     public function run() {
         $controller=$this->controller;

@@ -56,7 +56,6 @@ class Environment{
 	 * set some varibles
 	 */
 	public function prepare(){
-		$this->yiiInclude();
 		Yii::import('cms.components.CmsApplication');
 		defined('YII_DEBUG') or define('YII_DEBUG',$this->_config->debug);
 		defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',$this->_config->traceLevel);
@@ -67,7 +66,7 @@ class Environment{
 	 * you can do some thing before application run
 	 * @return boolean
 	 */
-	public function beforeRun(){
+	protected function beforeRun(){
 		return true;
 	}
 	
@@ -75,8 +74,9 @@ class Environment{
 	 * run yii application.
 	 */
 	public function run(){
-		$this->prepare();
+		$this->yiiInclude();
 		if ( $this->beforeRun() ){
+			$this->prepare();
 			$this->application->run();
 		}
 	}
