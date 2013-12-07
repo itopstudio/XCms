@@ -54,7 +54,6 @@ class ConfigBase{
 			'sourceLanguage' => 'en_us',
 			'language' => 'zh_cn',
 			
-			'defaultController' => 'site',
 			// Preloading 'log' component
 			'preload' => array('log'),
 			
@@ -86,8 +85,6 @@ class ConfigBase{
 				),
 			),
 				
-			'preloadModels' => array(),
-				
 			'components'=>array(
 		
 				'authManager' => array(
@@ -102,9 +99,7 @@ class ConfigBase{
 // 					'errorAction'=>'error/index',
 // 				),
 			),
-			'params' => array(
-			)
-			
+			'params' => array()
 		);
 	}
 	

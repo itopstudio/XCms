@@ -39,7 +39,7 @@ class Environment{
 	/**
 	 * @var ConfigBase
 	 */
-	private $_config = null;
+	protected $_config = null;
 	
 	/**
 	 * @param string $configObject
