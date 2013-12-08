@@ -16,9 +16,9 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 */
 	public function initUserData(){
 		$uid = $this->getUid();
-		$user = UserModel::model()->with(array(
-				'AuthPermissions',
-				'AuthGroups' => array(
+		$user = User::model()->with(array(
+				'authPermissions',
+				'authGroups' => array(
 						'with' => array(
 								'AuthRole'/*=>array(
 										'alias' => 'role',
@@ -30,13 +30,13 @@ class RightCalculatorAR extends RightCalculatorBase{
 								),*/
 						)
 				),
-				'AuthRoles' => array('with'=>'AuthPermission')
+				'authRoles' => array('with'=>'AuthPermission')
 		))->findByPk($uid);
 		if ( $user !== null ){
 			$separator = self::SEPARATOR_PREFIX_USER.$uid;
-			$roles = $user->AuthRoles;
-			$groups = $user->AuthGroups;
-			$permissions = $user->AuthPermissions;
+			$roles = $user->authRoles;
+			$groups = $user->authGroups;
+			$permissions = $user->authPermissions;
 			$userRoles = $this->initRoleWithChildren($roles);
 			
 			$this->storeData('userRoles',$separator,$userRoles);
@@ -211,7 +211,7 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 * @return array
 	 */
 	public function findRolePermissions($roleId){
-		$role = AuthRoles::model()->with('AuthPermission')->findByPk($roleId);
+		$role = authRoles::model()->with('AuthPermission')->findByPk($roleId);
 		$rolePermissions = array();
 		
 		if ( $role === null ){
@@ -230,7 +230,7 @@ class RightCalculatorAR extends RightCalculatorBase{
 	
 	public function findGroupRoles($groupId){
 		$groupRoles = array();
-		$group = AuthGroups::model()->with('AuthRole')->findByPk($groupId);
+		$group = authGroups::model()->with('AuthRole')->findByPk($groupId);
 	
 		if ( $group === null ){
 			return $groupRoles;
@@ -247,26 +247,26 @@ class RightCalculatorAR extends RightCalculatorBase{
 	}
 	
 	public function findUserRoles($userId){
-		$user = UserModel::model()->with(array(
-				'AuthRoles'
+		$user = User::model()->with(array(
+				'authRoles'
 		))->findByPk($userId);
 		
 		if ( $user === null ){
 			return array();
 		}
 		
-		return $user->AuthRoles;
+		return $user->authRoles;
 	}
 	
 	public function findUserGroups($userId){
-		$user = UserModel::model()->with(array(
-				'AuthGroups'
+		$user = User::model()->with(array(
+				'authGroups'
 		))->findByPk($userId);
 		
 		if ( $user === null ){
 			return array();
 		}
 		
-		return $user->AuthGroups;
+		return $user->authGroups;
 	}
 }

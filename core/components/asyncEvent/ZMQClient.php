@@ -11,7 +11,7 @@ class ZMQClient extends CApplicationComponent{
 	public $zmqServer;
 	public $sendTimeout;
 	public $reciveTimeout;
-	public $socketType;
+	public $socketType = ZMQ::SOCKET_REQ;
 	private $_active = false;
 	
 	public function init(){
