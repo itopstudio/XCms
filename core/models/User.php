@@ -29,7 +29,7 @@ class User extends SingleInheritance
 	 */
 	protected $_uuidDependence = array('password');
 	
-	public $maxPassword = 15;
+	public $maxPassword = 60;
 	public $minPassword = 6;
 	
 	/**

@@ -211,7 +211,7 @@ class RightCalculatorAR extends RightCalculatorBase{
 	 * @return array
 	 */
 	public function findRolePermissions($roleId){
-		$role = authRoles::model()->with('AuthPermission')->findByPk($roleId);
+		$role = AuthRoles::model()->with('AuthPermission')->findByPk($roleId);
 		$rolePermissions = array();
 		
 		if ( $role === null ){

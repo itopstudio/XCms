@@ -292,6 +292,7 @@ abstract class SingleInheritance extends CmsActiveRecord{
 		}
 		
 		$parent = $this->parentFactory(__FUNCTION__);
+		
 		if ( $parent !== null ){
 			return $parent->validate($attributes,$clearErrors) && parent::validate($attributes,$clearErrors);
 		}else {
