@@ -28,7 +28,7 @@ class AsyncEventHandlers extends CComponent{
 		$message.="\nREQUEST_URI=".$_SERVER['REQUEST_URI'];
 		$message.="\nHTTP_REFERER=".$_SERVER['HTTP_REFERER'];
 		$message.="\n---";
-		$event->handled = false;
+		//$event->handled = false;
 	
 		$event->params = array('message'=>$message);
 		self::$runner->raiseAsyncEvent('onException',$event->params);
