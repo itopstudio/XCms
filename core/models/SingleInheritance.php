@@ -296,7 +296,7 @@ abstract class SingleInheritance extends CmsActiveRecord{
 		if ( $parent !== null ){
 			return $parent->validate($attributes,$clearErrors) && parent::validate($attributes,$clearErrors);
 		}else {
-			return true;
+			return parent::validate($attributes,$clearErrors);
 		}
 	}
 	
@@ -406,10 +406,12 @@ abstract class SingleInheritance extends CmsActiveRecord{
 	public function delete($deleteParent=true){
 		if ( $deleteParent === true ){
 			$parent = $this->parentFactory(__FUNCTION__);
-			if ( $parent === null ){
-				throw new CException(YIi::t('models/singleInheritance','record can not be deleted.can not find base record'));
-			}else {
-				return $parent->delete();
+			if ( $parent !== null ){
+				if ( $parent->_parentRelation === null ){
+					return $parent->delete(false);
+				}else {
+					return $parent->delete();
+				}
 			}
 		}else {
 			return parent::delete();

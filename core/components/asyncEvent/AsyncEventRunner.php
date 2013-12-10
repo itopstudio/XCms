@@ -7,7 +7,43 @@
  */
 class AsyncEventRunner extends CApplicationComponent{
 	public $zmqClientId = 'zmqClient';
+	public $logRouterID = 'log';
+	/**
+	 * 异步事件，通过{@link self::raiseAsyncEvent}可以发起
+	 * @var array
+	 */
 	private $_events = array();
+	/**
+	 * {@link CApplication}中定义的事件，事件讲交给handler处理
+	 * @var array
+	 */
+	private $_systemHooks = array();
+	/**
+	 * 处理系统及用户预定义事件的对象
+	 * @var string
+	 */
+	private $_hookHandler = 'AsyncEventHandlers';
+	/**
+	 * 异步日志记录路由
+	 * @var array
+	 */
+	private $_asyncLogRoutes = array();
+	
+	
+	public function __construct(){
+		Yii::setPathOfAlias('asyncEventRunnerAlias',dirname(__FILE__));
+		Yii::import('asyncEventRunnerAlias.*');
+		Yii::import('asyncEventRunnerAlias.zmqCommands.*');
+		Yii::import('asyncEventRunnerAlias.logging.*');
+		
+		$hookHandler = $this->_hookHandler;
+		$hookHandler::$runner = $this;
+		$this->_systemHooks = array(
+				'onEndRequest' => array($hookHandler,'onAppEnd'),
+				'onException' => array($hookHandler,'onException'),
+				'onError' => array($hookHandler,'onError')
+		);
+	}
 	
 	/**
 	 * 事件处理函数
@@ -17,17 +53,6 @@ class AsyncEventRunner extends CApplicationComponent{
 		$zmqClient = Yii::app()->getComponent('zmqClient');
 		$zmqMessage = new ZMQMessage($event->loadData());
 		$zmqClient->send($zmqMessage);
-	}
-	
-	/**
-	 * onEndRequest事件处理函数
-	 * @param CEvent $event
-	 */
-	public function onAppEnd($event){
-		if ( isset($this->_events['onEndRequest']) ){
-			$this->raiseAsyncEvent('onEndRequest',$event->params, $event->sender);
-			unset($this->_events['onEndRequest']);
-		}
 	}
 	
 	/**
@@ -41,6 +66,26 @@ class AsyncEventRunner extends CApplicationComponent{
 		}
 	}
 	
+	public function setSystemHooks($hooks){
+		foreach ( $hooks as $name => $hook ){
+			$this->_systemHooks[$name] = $hook;
+		}
+	}
+	
+	public function setAsyncLogRoutes($routes){
+		$log = Yii::app()->getComponent($this->logRouterID);
+		if ( $log === null ){
+			return false;
+		}
+		foreach ( $routes as $i => $route ){
+			$route['eventRunner'] = $this;
+			$route=Yii::createComponent($route);
+			$route->init();
+			$routes[$i] = $route;
+		}
+		$log->setRoutes($routes);
+	}
+	
 	/**
 	 * 注册事件
 	 * 一般用于程序内部调用
@@ -48,11 +93,18 @@ class AsyncEventRunner extends CApplicationComponent{
 	 * @param array $eventConfig
 	 */
 	public function registerAsyncEvent($name,$eventConfig){
-		if ( $name === 'onEndRequest' ){
-			Yii::app()->onEndRequest = array($this,'onAppEnd');
+		if ( array_key_exists($name,$this->_systemHooks) ){
+			Yii::app()->$name = $this->_systemHooks[$name];
 		}
-		if ( isset($eventConfig['command']) && is_array($eventConfig['command']) ){
-			$this->_events[$name][] = $eventConfig;
+		if ( !isset($eventConfig[0]) || !is_array($eventConfig[0]) ){
+			$configs = array($eventConfig);
+		}else {
+			$configs = $eventConfig;
+		}
+		foreach ( $configs as $config ){
+			if ( isset($config['command']) && is_array($config['command']) ){
+				$this->_events[$name][] = $config;
+			}
 		}
 	}
 	
@@ -74,6 +126,7 @@ class AsyncEventRunner extends CApplicationComponent{
 				$event = new AsyncEvent($this,$config);
 				$this->processer($event);
 			}
+			unset($this->_events[$name]);
 		}
 	}
 }
