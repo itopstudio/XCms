@@ -36,7 +36,7 @@ class AuthUser extends CWebUser{
 	 * @return string
 	 */
 	public function generateOperationKey(&$operation){
-		return 'AuthUser_Access_Cache_'.json_encode($operation);
+		return 'USER_'.$this->getId().'_AuthUser_Access_Cache_'.json_encode($operation);
 	}
 	
 	/**

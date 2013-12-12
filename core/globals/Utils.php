@@ -8,6 +8,35 @@
  * you can access all the global functions in your application
  */
 class Utils{
+	public static function resovleProviderConfigCriteria(&$config,$enablePagination=true,$enableSort=true){
+		if ( isset($config['criteria']) ){
+			$criteria = $config['criteria'];
+			if ( is_array($criteria) ){
+				$criteria = new CDbCriteria($criteria);
+			}
+		}else {
+			$criteria = new CDbCriteria();
+		}
+		$config['criteria'] = $criteria;
+	
+		if ( isset($config['countCriteria']) ){
+			$countCriteria = $config['countCriteria'];
+			if ( is_array($countCriteria) ){
+				$countCriteria = new CDbCriteria($countCriteria);
+			}
+		}else {
+			$countCriteria = new CDbCriteria();
+		}
+		$config['countCriteria'] = $countCriteria;
+		
+		if ( $enablePagination === false ){
+			$config['pagination'] = false;
+		}
+		if ( $enableSort === false ){
+			$config['sort'] = false;
+		}
+	}
+	
 	public static function getComponent($componentId = null){
 		if ( $componentId === null )
 			return Yii::app()->getComponents();
