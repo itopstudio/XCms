@@ -5,7 +5,7 @@
  * Date 2013-12-7 
  * Encoding UTF-8
  */
-class ReplyServerBase extends ZMQBaseCommand{
+abstract class ReplyServerBase extends ZMQBaseCommand{
 	/**
 	 * 绑定地址
 	 * @var string

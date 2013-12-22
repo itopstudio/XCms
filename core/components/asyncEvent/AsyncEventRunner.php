@@ -14,7 +14,7 @@ class AsyncEventRunner extends CApplicationComponent{
 	 */
 	private $_events = array();
 	/**
-	 * {@link CApplication}中定义的事件，事件讲交给handler处理
+	 * {@link CApplication}中定义的事件，事件将交给handler处理
 	 * @var array
 	 */
 	private $_systemHooks = array();
@@ -50,7 +50,7 @@ class AsyncEventRunner extends CApplicationComponent{
 	 * @param AsyncEvent $event
 	 */
 	public function processer($event){
-		$zmqClient = Yii::app()->getComponent('zmqClient');
+		$zmqClient = Yii::app()->getComponent($this->zmqClientId);
 		$zmqMessage = new ZMQMessage($event->loadData());
 		$zmqClient->send($zmqMessage);
 	}
