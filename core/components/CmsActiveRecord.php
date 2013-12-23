@@ -7,6 +7,16 @@
  * Encoding UTF-8
  */
 class CmsActiveRecord extends CActiveRecord{
+	public $sum;
+	public function sum($field,$conditions = '',$params = array()){
+		$res = $this->find(array(
+			'select' => 'SUM(`'.$field.'`) AS `sum`',
+			'condition' => $conditions,
+			'params' => $params
+		));
+		//print_r($res);
+		return $res->sum;
+	}
 	
 	public function hasAttribute($name,$checkProperty=true){
 		return ( $checkProperty===true && property_exists($this,$name) ) | parent::hasAttribute($name);
