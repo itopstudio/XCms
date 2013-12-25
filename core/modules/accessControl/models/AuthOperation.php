@@ -44,7 +44,7 @@ class AuthOperation extends LevelModel
 			array('action','unionUnique','unionAttributes'=>array('module','controller'),'message'=>'该操作已存在'),
 			array('operation_name', 'length', 'max'=>20),
 			array('module, controller, action', 'length', 'max'=>30),
-			array('description,fid, level, lft, rgt,', 'safe'),
+			array('description,fid, level, lft, rgt,list_order', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, operation_name, description, module, controller, action', 'safe', 'on'=>'search'),

@@ -53,6 +53,7 @@ class AsyncEventRunner extends CApplicationComponent{
 		$zmqClient = Yii::app()->getComponent($this->zmqClientId);
 		$zmqMessage = new ZMQMessage($event->loadData());
 		$zmqClient->send($zmqMessage);
+		$zmqClient->receive();
 	}
 	
 	/**

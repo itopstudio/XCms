@@ -24,7 +24,9 @@ class AuthMenu extends CApplicationComponent{
 		}
 		
 		$model = AuthOperation::model();
-		$topMenus = $model->findChildrenByLevel(1);
+		$topMenus = $model->findChildrenByLevel(1,array(
+				'order' => 'list_order DESC'
+		));
 		if ( $topMenus === null ){
 			return array();
 		}
@@ -33,7 +35,7 @@ class AuthMenu extends CApplicationComponent{
 		$topMenuChildrenMap = array();
 		$user = Yii::app()->getUser();
 		foreach ( $topMenus as $topCount => $topMenu ){
-			$childrenTree = array_values($model->findChildrenInPreorder($topMenu));
+			$childrenTree = array_values($model->findChildrenInPreorder($topMenu,'list_order DESC'));
 			$count = count($childrenTree)-1;
 			$topMenuPos = count($menus);
 			$topMenuChildrenMap[$topCount] = $topMenuPos;

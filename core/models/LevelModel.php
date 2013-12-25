@@ -442,12 +442,18 @@ abstract class LevelModel extends CmsActiveRecord{
 	 * @param mixed $node CActiveRecord or int
 	 * @return array[string,CActiveRecord] those record are orderd in lft ASC.
 	 */
-	public function findChildrenInPreorder($node){
+	public function findChildrenInPreorder($node,$order=''){
 		$node = $this->findByPk($node);
 		if ( $node === null ){
 			return null;
 		}
-		$children = $this->findChildrenByBoundary($node,array('order'=>'`lft` ASC'));
+		
+		if ( $order !== '' ){
+			$order = $order.',`lft` ASC';
+		}else {
+			$order = '`lft` ASC';
+		}
+		$children = $this->findChildrenByBoundary($node,array('order'=>$order));
 		
 		$preorderTree = array();
 		$parentsMap = array();

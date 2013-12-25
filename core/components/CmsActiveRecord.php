@@ -14,7 +14,6 @@ class CmsActiveRecord extends CActiveRecord{
 			'condition' => $conditions,
 			'params' => $params
 		));
-		//print_r($res);
 		return $res->sum;
 	}
 	
