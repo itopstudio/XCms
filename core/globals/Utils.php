@@ -449,11 +449,19 @@ class Utils{
 		//ini_set('cms','session.cache_limiter', 'private');   // (6)
 	}
 
-	public static function base64_serialize($data){
+	public static function base64Serialize($data){
 		return base64_encode(serialize($data));
 	}
 	
-	public static function base64_unserialize($data){
+	public static function base64Unserialize($data){
 		return unserialize(base64_decode($data));
+	}
+	
+	public static function appendEncrypt($data){
+		return strtoupper(md5(microtime(true))).strtoupper(base64_encode($data));
+	}
+	
+	public static function appendDecrypt($data){
+		return base64_decode(substr($data,32));
 	}
 }
