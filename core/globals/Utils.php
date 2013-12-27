@@ -458,10 +458,10 @@ class Utils{
 	}
 	
 	public static function appendEncrypt($data){
-		return urlencode(strtoupper(md5(microtime(true))).base64_encode($data));
+		return strtoupper(md5(microtime(true))).base64_encode($data);
 	}
 	
 	public static function appendDecrypt($data){
-		return base64_decode(substr(urldecode($data),32));
+		return base64_decode(substr($data,32));
 	}
 }
