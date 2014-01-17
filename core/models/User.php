@@ -114,9 +114,9 @@ class User extends SingleInheritance
 		return parent::beforeSave();
 	}
 	
-	public function setPassword($password,$cost=11){
+	public function setPassword($password,$cost=11,$column='password'){
 		$security = Yii::app()->getSecurityManager();
 		$this->_changeUUID = true;
-		$this->setAttribute('password',$security->generatePassword($password,$cost));
+		$this->setAttribute($column,$security->generatePassword($password,$cost));
 	}
 }
